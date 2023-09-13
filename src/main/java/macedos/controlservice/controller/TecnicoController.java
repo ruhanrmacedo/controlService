@@ -1,34 +1,45 @@
 package macedos.controlservice.controller;
 
 import jakarta.validation.Valid;
-import macedos.controlservice.tecnico.DadosCadastroTecnico;
-import macedos.controlservice.tecnico.DadosListagemTecnico;
-import macedos.controlservice.tecnico.Tecnico;
-import macedos.controlservice.tecnico.TecnicoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import macedos.controlservice.dto.ListagemTecnicoDTO;
+import macedos.controlservice.entity.Tecnico;
+import macedos.controlservice.service.TecnicoService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("tecnicos")
+@RequestMapping("/api/tecnicos")
 public class TecnicoController {
 
-    @Autowired
-    private TecnicoRepository repository;
+    private final TecnicoService tecnicoService;
 
-    @PostMapping
-    @Transactional
-    public void cadastrar(@RequestBody @Valid DadosCadastroTecnico dados) {
-
-        repository.save(new Tecnico(dados));
+    public TecnicoController(TecnicoService tecnicoService) {
+        this.tecnicoService =  tecnicoService;
     }
 
-    @GetMapping
-    public Page<DadosListagemTecnico> listar(Pageable paginacao) {
-        return repository.findByDataDesligamentoIsNull(paginacao).map(DadosListagemTecnico::new);
+    @PostMapping("/cadastrarTecnico")
+    @Transactional
+    public ResponseEntity<String> cadastrar(@Valid @RequestBody Tecnico tecnico) {
+        try {
+            tecnicoService.cadastrarTecnico(tecnico);
+        } catch (Exception exception) {
+            return new ResponseEntity<>("Erro ao tentar cadastrar novo técnico: " + exception.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("Técnico cadastrado com sucesso", HttpStatus.CREATED);
+    }
+
+    @GetMapping("listarTecnicos")
+    public ResponseEntity<List<ListagemTecnicoDTO>> listar() {
+        try {
+            List<ListagemTecnicoDTO> tecnicos = tecnicoService.listarTecnicosDTO();
+            return new ResponseEntity<>(tecnicos, HttpStatus.OK);
+        } catch (Exception exception) {
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

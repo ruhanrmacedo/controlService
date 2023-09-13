@@ -1,15 +1,17 @@
-package macedos.controlservice.tecnico;
+package macedos.controlservice.dto;
+
+import macedos.controlservice.entity.Tecnico;
 
 import java.time.LocalDate;
 
-public record DadosListagemTecnico(
+public record ListagemTecnicoDTO(
         Long idTecnico,
         String nome,
         String login,
         String placa,
         LocalDate dataAdmissao) {
 
-    public DadosListagemTecnico(Tecnico tecnico) {
+    public ListagemTecnicoDTO(Tecnico tecnico) {
         this(tecnico.getIdTecnico(),
                 tecnico.getNome(),
                 tecnico.getLogin(),

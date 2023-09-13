@@ -1,11 +1,11 @@
-package macedos.controlservice.tecnico;
+package macedos.controlservice.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
-public record DadosCadastroTecnico(
+public record CadastroTecnicoDTO(
         @NotBlank
         String nome,
         @NotBlank

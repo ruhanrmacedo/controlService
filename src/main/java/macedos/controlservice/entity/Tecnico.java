@@ -1,4 +1,4 @@
-package macedos.controlservice.tecnico;
+package macedos.controlservice.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import macedos.controlservice.dto.CadastroTecnicoDTO;
 
 import java.time.LocalDate;
 
@@ -29,7 +30,7 @@ public class Tecnico {
     private LocalDate dataDesligamento;
 
 
-    public Tecnico(DadosCadastroTecnico dados) {
+    public Tecnico(CadastroTecnicoDTO dados) {
         this.nome = dados.nome();
         this.cpf = dados.cpf();
         this.login = dados.login();
