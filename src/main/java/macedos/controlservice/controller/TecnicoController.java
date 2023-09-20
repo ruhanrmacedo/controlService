@@ -1,6 +1,7 @@
 package macedos.controlservice.controller;
 
 import jakarta.validation.Valid;
+import macedos.controlservice.dto.CadastroTecnicoDTO;
 import macedos.controlservice.dto.ListagemTecnicoDTO;
 import macedos.controlservice.entity.Tecnico;
 import macedos.controlservice.service.TecnicoService;
@@ -24,16 +25,17 @@ public class TecnicoController {
 
     @PostMapping("/cadastrarTecnico")
     @Transactional
-    public ResponseEntity<String> cadastrar(@Valid @RequestBody Tecnico tecnico) {
+    public ResponseEntity<String> cadastrar(@Valid @RequestBody CadastroTecnicoDTO cadastroTecnicoDTO) {
         try {
+            Tecnico tecnico = new Tecnico(cadastroTecnicoDTO);
             tecnicoService.cadastrarTecnico(tecnico);
+            return new ResponseEntity<>("Técnico cadastrado com sucesso!", HttpStatus.CREATED);
         } catch (Exception exception) {
             return new ResponseEntity<>("Erro ao tentar cadastrar novo técnico: " + exception.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Técnico cadastrado com sucesso", HttpStatus.CREATED);
     }
 
-    @GetMapping("listarTecnicos")
+    @GetMapping("/listarTecnicos")
     public ResponseEntity<List<ListagemTecnicoDTO>> listar() {
         try {
             List<ListagemTecnicoDTO> tecnicos = tecnicoService.listarTecnicosDTO();
