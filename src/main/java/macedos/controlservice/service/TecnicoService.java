@@ -1,15 +1,15 @@
 package macedos.controlservice.service;
 
 import jakarta.validation.Valid;
-import macedos.controlservice.dto.ListagemTecnicoDTO;
+import macedos.controlservice.dto.DemitirTecnicoDTO;
+import macedos.controlservice.dto.EditarTecnicosDTO;
 import macedos.controlservice.entity.Tecnico;
 import macedos.controlservice.repository.TecnicoRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class TecnicoService {
@@ -26,12 +26,32 @@ public class TecnicoService {
         return tecnico;
     }
 
-    public List<ListagemTecnicoDTO> listarTecnicosDTO() {
-        List<Tecnico> tecnicos = tecnicoRepository.findByDataDesligamentoIsNull();
-        List<ListagemTecnicoDTO> tecnicosDTO = new ArrayList<>();
-        for (Tecnico tecnico : tecnicos) {
-            tecnicosDTO.add(new ListagemTecnicoDTO(tecnico));
-        }
-        return tecnicosDTO;
+    public Page<Tecnico> listarTecnicosDTO(Pageable paginacao) {
+        return tecnicoRepository.findByDataDesligamentoIsNull(paginacao);
+    }
+
+    public Page<Tecnico> listarTodosTecnicos(Pageable paginacao) {
+        return tecnicoRepository.findAllByOrderByNome(paginacao);
+    }
+
+    public Tecnico editarTecnicos(EditarTecnicosDTO dados){
+        var tecnico = tecnicoRepository.getReferenceById(dados.idTecnico());
+        tecnico.atualizarInformacoes(dados);
+        return tecnico;
+    }
+
+    public Tecnico demitirTecnico(DemitirTecnicoDTO dados) {
+        var tecnicoDesligado = tecnicoRepository.getReferenceById(dados.idTecnico());
+        tecnicoDesligado.desligarTecnico(dados);
+        return tecnicoDesligado;
+    }
+
+    public void excluirTecnicoGerente(Long idTecnico){
+        tecnicoRepository.deleteById(idTecnico);
+    }
+
+    public Tecnico detalharTecnico (Long idTecnico) {
+        var tecnicoDetalhar = tecnicoRepository.getReferenceById(idTecnico);
+        return tecnicoDetalhar;
     }
 }

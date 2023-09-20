@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import macedos.controlservice.dto.CadastroTecnicoDTO;
+import macedos.controlservice.dto.DemitirTecnicoDTO;
+import macedos.controlservice.dto.EditarTecnicosDTO;
 
 import java.time.LocalDate;
 
@@ -37,6 +39,24 @@ public class Tecnico {
         this.placa = dados.placa();
         this.dataAdmissao = dados.dataAdmissao();
         this.dataDesligamento = dados.dataDesligamento();
+    }
+
+    public void atualizarInformacoes(EditarTecnicosDTO dados) {
+        if(dados.nome() != null) {
+            this.nome = dados.nome();
+        }
+        if(dados.login() != null) {
+            this.login = dados.login();
+        }
+        if(dados.placa() != null) {
+            this.placa = dados.placa();
+        }
+    }
+
+    public void desligarTecnico(DemitirTecnicoDTO dados) {
+        if(dados.dataDesligamento() != null) {
+            this.dataDesligamento = dados.dataDesligamento();
+        }
     }
 
 }

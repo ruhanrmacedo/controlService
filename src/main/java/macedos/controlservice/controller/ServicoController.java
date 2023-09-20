@@ -31,7 +31,7 @@ public class ServicoController {
     public ResponseEntity<DetalhamentoServicoDTO> cadastrar(@Valid @RequestBody CadastroServicoDTO cadastroServicoDTO, UriComponentsBuilder uriBuilder){
             Servico servico = new Servico(cadastroServicoDTO);
             servicoService.cadastrarServico(servico);
-            var uri = uriBuilder.path("/servicos/cadastrarServico/{idServico}").buildAndExpand(servico.getIdServico()).toUri();
+            var uri = uriBuilder.path("api/servicos/cadastrarServico/{idServico}").buildAndExpand(servico.getIdServico()).toUri();
             return ResponseEntity.created(uri).body(new DetalhamentoServicoDTO(servico));
     }
 
