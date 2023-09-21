@@ -1,8 +1,8 @@
-package macedos.controlservice.dto;
+package macedos.controlservice.dto.servico;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import macedos.controlservice.entity.TipoServico;
+import macedos.controlservice.enums.TipoServico;
 
 public record CadastroServicoDTO(
         @NotBlank

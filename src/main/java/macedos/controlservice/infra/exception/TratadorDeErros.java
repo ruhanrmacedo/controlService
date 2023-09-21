@@ -1,4 +1,4 @@
-package macedos.controlservice.infra;
+package macedos.controlservice.infra.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;

@@ -1,10 +1,10 @@
 package macedos.controlservice.controller;
 
 import jakarta.validation.Valid;
-import macedos.controlservice.dto.CadastroServicoDTO;
-import macedos.controlservice.dto.DetalhamentoServicoDTO;
-import macedos.controlservice.dto.EditarServicosDTO;
-import macedos.controlservice.dto.ListagemServicosDTO;
+import macedos.controlservice.dto.servico.CadastroServicoDTO;
+import macedos.controlservice.dto.servico.DetalhamentoServicoDTO;
+import macedos.controlservice.dto.servico.EditarServicosDTO;
+import macedos.controlservice.dto.tecnico.ListagemServicosDTO;
 import macedos.controlservice.entity.Servico;
 import macedos.controlservice.service.ServicoService;
 import org.springframework.data.domain.Page;

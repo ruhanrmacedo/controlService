@@ -1,4 +1,4 @@
-package macedos.controlservice.dto;
+package macedos.controlservice.dto.tecnico;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

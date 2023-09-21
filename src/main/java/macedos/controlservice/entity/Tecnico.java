@@ -6,9 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import macedos.controlservice.dto.CadastroTecnicoDTO;
-import macedos.controlservice.dto.DemitirTecnicoDTO;
-import macedos.controlservice.dto.EditarTecnicosDTO;
+import macedos.controlservice.dto.tecnico.CadastroTecnicoDTO;
+import macedos.controlservice.dto.tecnico.DemitirTecnicoDTO;
+import macedos.controlservice.dto.tecnico.EditarTecnicosDTO;
 
 import java.time.LocalDate;
 

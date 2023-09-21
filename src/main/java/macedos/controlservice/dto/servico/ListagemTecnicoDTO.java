@@ -1,4 +1,4 @@
-package macedos.controlservice.dto;
+package macedos.controlservice.dto.servico;
 
 import macedos.controlservice.entity.Tecnico;
 

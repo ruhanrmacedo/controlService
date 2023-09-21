@@ -2,8 +2,9 @@ package macedos.controlservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import macedos.controlservice.dto.CadastroServicoDTO;
-import macedos.controlservice.dto.EditarServicosDTO;
+import macedos.controlservice.dto.servico.CadastroServicoDTO;
+import macedos.controlservice.dto.servico.EditarServicosDTO;
+import macedos.controlservice.enums.TipoServico;
 
 @Table(name= "servicos")
 @Entity(name = "Servico")

@@ -1,7 +1,7 @@
 package macedos.controlservice.service;
 
 import jakarta.validation.Valid;
-import macedos.controlservice.dto.EditarServicosDTO;
+import macedos.controlservice.dto.servico.EditarServicosDTO;
 import macedos.controlservice.entity.Servico;
 import macedos.controlservice.repository.ServicoRepository;
 import org.slf4j.Logger;
@@ -17,14 +17,9 @@ import java.util.List;
 @Service
 public class ServicoService {
 
-    private final ServicoRepository servicoRepository;
-    private static final Logger logger = LoggerFactory.getLogger(ServicoService.class); // Defina o logger
-
-
     @Autowired
-    public ServicoService(ServicoRepository servicoRepository) {
-        this.servicoRepository = servicoRepository;
-    }
+    private ServicoRepository servicoRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ServicoService.class); // Defina o logger
 
     public Servico cadastrarServico(@Valid Servico servico) {
         servicoRepository.save(servico);

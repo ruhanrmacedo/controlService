@@ -1,4 +1,4 @@
-package macedos.controlservice.entity;
+package macedos.controlservice.enums;
 
 public enum TipoServico {
     ADESAO,

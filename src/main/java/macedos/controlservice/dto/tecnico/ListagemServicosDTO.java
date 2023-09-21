@@ -1,7 +1,7 @@
-package macedos.controlservice.dto;
+package macedos.controlservice.dto.tecnico;
 
 import macedos.controlservice.entity.Servico;
-import macedos.controlservice.entity.TipoServico;
+import macedos.controlservice.enums.TipoServico;
 
 public record ListagemServicosDTO(
     Long idServico,

@@ -1,8 +1,8 @@
 package macedos.controlservice.service;
 
 import jakarta.validation.Valid;
-import macedos.controlservice.dto.DemitirTecnicoDTO;
-import macedos.controlservice.dto.EditarTecnicosDTO;
+import macedos.controlservice.dto.tecnico.DemitirTecnicoDTO;
+import macedos.controlservice.dto.tecnico.EditarTecnicosDTO;
 import macedos.controlservice.entity.Tecnico;
 import macedos.controlservice.repository.TecnicoRepository;
 
@@ -14,12 +14,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class TecnicoService {
 
-    private final TecnicoRepository tecnicoRepository;
-
     @Autowired
-    public TecnicoService(TecnicoRepository tecnicoRepository) {
-        this.tecnicoRepository = tecnicoRepository;
-    }
+    private TecnicoRepository tecnicoRepository;
 
     public Tecnico cadastrarTecnico(@Valid Tecnico tecnico) {
         tecnicoRepository.save(tecnico);
