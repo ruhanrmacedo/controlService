@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -51,6 +52,7 @@ public class TecnicoController {
 
     @PutMapping("/editarTecnico")
     @Transactional
+    @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
     public ResponseEntity<DetalhamentoTecnicoDTO> editarTecnico(@Valid @RequestBody EditarTecnicosDTO dados) {
         Tecnico tecnicoEditado = tecnicoService.editarTecnicos(dados);
         DetalhamentoTecnicoDTO detalhamentoTecnicoDTO = new DetalhamentoTecnicoDTO(tecnicoEditado);
@@ -59,6 +61,7 @@ public class TecnicoController {
 
     @PutMapping("/demitirTecnico")
     @Transactional
+    @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
     public ResponseEntity<DetalhamentoTecnicoDTO> demitirTecnico(@Valid @RequestBody DemitirTecnicoDTO dados) {
         Tecnico tecnicoDemitido = tecnicoService.demitirTecnico(dados);
         DetalhamentoTecnicoDTO detalhamentoTecnicoDTO = new DetalhamentoTecnicoDTO(tecnicoDemitido);
@@ -66,6 +69,7 @@ public class TecnicoController {
     }
 
     @DeleteMapping("/excluirTecnico/{idTecnico}")
+    @Secured({"ROLE_ROOT"})
     public ResponseEntity excluirTecnicoGerente(@PathVariable Long idTecnico) {
         tecnicoService.excluirTecnicoGerente(idTecnico);
         return ResponseEntity.noContent().build();
