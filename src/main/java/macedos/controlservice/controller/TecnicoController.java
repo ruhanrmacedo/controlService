@@ -1,5 +1,6 @@
 package macedos.controlservice.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import macedos.controlservice.dto.servico.ListagemTecnicoDTO;
 import macedos.controlservice.dto.tecnico.CadastroTecnicoDTO;
@@ -20,6 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/api/tecnicos")
+@SecurityRequirement(name = "bearer-key")
 public class TecnicoController {
 
     private final TecnicoService tecnicoService;

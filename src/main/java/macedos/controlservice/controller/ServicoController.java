@@ -1,5 +1,6 @@
 package macedos.controlservice.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import macedos.controlservice.dto.servico.CadastroServicoDTO;
 import macedos.controlservice.dto.servico.DetalhamentoServicoDTO;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/servicos")
+@SecurityRequirement(name = "bearer-key")
 public class ServicoController {
 
     @Autowired

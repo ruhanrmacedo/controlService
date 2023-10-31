@@ -1,5 +1,6 @@
 package macedos.controlservice.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import macedos.controlservice.dto.servicoExecutado.DetalhamentoRegistrarServDTO;
 import macedos.controlservice.dto.servicoExecutado.RegistrarServicoDTO;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/servicoExecutado")
+@SecurityRequirement(name = "bearer-key")
 public class ServicoExecutadoController {
 
     @Autowired
