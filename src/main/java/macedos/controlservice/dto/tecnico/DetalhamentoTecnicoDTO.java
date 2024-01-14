@@ -4,16 +4,24 @@ import macedos.controlservice.entity.Tecnico;
 
 import java.time.LocalDate;
 
-public record DetalhamentoTecnicoDTO(Long idTecnico,
-                                     String nome,
-                                     String cpf,
-                                     String login,
-                                     String placa,
-                                     LocalDate dataAdmissao,
-                                     LocalDate dataDesligamento) {
+public record DetalhamentoTecnicoDTO(
+        Long idTecnico,
+
+        String nome,
+
+        String cpf,
+
+        String login,
+
+        String placa,
+
+        LocalDate dataAdmissao,
+
+        LocalDate dataDesligamento) {
 
     public DetalhamentoTecnicoDTO(Tecnico tecnico){
-        this(tecnico.getIdTecnico(),
+        this(
+                tecnico.getIdTecnico(),
                 tecnico.getNome(),
                 tecnico.getCpf(),
                 tecnico.getLogin(),

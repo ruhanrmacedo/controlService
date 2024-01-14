@@ -33,13 +33,12 @@ public class ServicoController {
      * @param cadastroServicoDTO Os dados para cadastrar um novo serviço.
      * @param uriBuilder O construtor de URIs para criar a URI de resposta.
      * @return ResponseEntity contendo os detalhes do serviço cadastrado.
+     * Este endpoint está disponível apenas para os usuários GERENTE e ROOT.
      */
     @PostMapping("/cadastrarServico")
     @Transactional
     @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
     public ResponseEntity<DetalhamentoServicoDTO> cadastrar(@Valid @RequestBody CadastroServicoDTO cadastroServicoDTO, UriComponentsBuilder uriBuilder){
-        // O serviço cadastra um novo serviço com base nos dados fornecidos.
-        // Este endpoint está disponível apenas para os usuários GERENTE e ROOT.
         Servico servico = new Servico(cadastroServicoDTO);
             servicoService.cadastrarServico(servico);
             var uri = uriBuilder.path("api/servicos/cadastrarServico/{idServico}").buildAndExpand(servico.getIdServico()).toUri();

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import macedos.controlservice.dto.usuario.CadastroUsuarioDTO;
 import macedos.controlservice.enums.TipoUsuario;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,6 +31,16 @@ public class Usuario implements UserDetails {
     private String login;
     private String senha;
     private TipoUsuario tipoUsuario;
+
+    public Usuario(CadastroUsuarioDTO cadastroUsuarioDTO) {
+        this.nome = cadastroUsuarioDTO.nome();
+        this.cpf = cadastroUsuarioDTO.cpf();
+        this.login = cadastroUsuarioDTO.login();
+        this.senha = cadastroUsuarioDTO.senha();
+        this.tipoUsuario = cadastroUsuarioDTO.tipoUsuario();
+    }
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -82,5 +93,25 @@ public class Usuario implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public void setTipoUsuario(TipoUsuario tipoUsuario) {
+        this.tipoUsuario = tipoUsuario;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 }
