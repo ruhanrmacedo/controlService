@@ -4,6 +4,8 @@ import macedos.controlservice.entity.Usuario;
 import macedos.controlservice.enums.TipoUsuario;
 
 public record UsuarioDTO (
+
+        Long id,
         String nome,
         String cpf,
         String login,
@@ -11,6 +13,7 @@ public record UsuarioDTO (
 
     public UsuarioDTO(Usuario usuario) {
         this(
+                usuario.getId(),
                 usuario.getNome(),
                 usuario.getCpf(),
                 usuario.getLogin(),

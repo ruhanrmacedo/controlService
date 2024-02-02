@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import macedos.controlservice.enums.TipoUsuario;
 
+import java.time.LocalDate;
+
 public record CadastroUsuarioDTO(
         @NotBlank
         String nome,
@@ -14,5 +16,8 @@ public record CadastroUsuarioDTO(
         @NotNull
         String senha,
         @NotNull
-        TipoUsuario tipoUsuario) {
+        TipoUsuario tipoUsuario,
+        @NotNull
+        LocalDate dataAtivacao,
+        LocalDate dataInativacao) {
 }

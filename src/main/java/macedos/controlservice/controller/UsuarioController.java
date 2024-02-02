@@ -2,12 +2,13 @@ package macedos.controlservice.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import macedos.controlservice.dto.usuario.CadastroUsuarioDTO;
-import macedos.controlservice.dto.usuario.UsuarioDTO;
-import macedos.controlservice.dto.usuario.UsuarioDetalhesDTO;
+import macedos.controlservice.dto.usuario.*;
 import macedos.controlservice.entity.Usuario;
 import macedos.controlservice.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,5 +51,28 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioDetalhesDTO);
     }
 
+    @GetMapping("/listarTodosUsuarios")
+    public ResponseEntity<Page<Usuario>> listarTodosUsuarios(@PageableDefault(sort = "nome")Pageable paginacao) {
+        Page<Usuario> usuarios = usuarioService.listarTodosUsuarios(paginacao);
+        return ResponseEntity.ok(usuarios);
+    }
 
+    @PutMapping("/editarUsuario")
+    @Transactional
+    public ResponseEntity<DetalhamentoUsuarioDTO> editarUsuario(@Valid @RequestBody EditarUsuarioDTO dados) {
+        Usuario usuarioEditado = usuarioService.editarUsuario(dados);
+        DetalhamentoUsuarioDTO detalhamentoUsuarioDTO = new DetalhamentoUsuarioDTO(usuarioEditado);
+        return ResponseEntity.ok(detalhamentoUsuarioDTO);
+    }
+
+    @PutMapping("/alterarSenha")
+    @Transactional
+    public ResponseEntity<Void> alterarSenha(@RequestParam String novaSenha, @RequestParam String confirmarSenha) {
+        try {
+            usuarioService.alterarSenha(novaSenha, confirmarSenha);
+            return ResponseEntity.ok().build();
+        } catch ( IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

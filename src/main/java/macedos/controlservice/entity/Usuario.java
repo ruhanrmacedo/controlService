@@ -1,16 +1,19 @@
 package macedos.controlservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import macedos.controlservice.dto.usuario.CadastroUsuarioDTO;
+import macedos.controlservice.dto.usuario.EditarUsuarioDTO;
 import macedos.controlservice.enums.TipoUsuario;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,6 +34,12 @@ public class Usuario implements UserDetails {
     private String login;
     private String senha;
     private TipoUsuario tipoUsuario;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate dataAtivacao;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate dataInativacao;
+
 
     public Usuario(CadastroUsuarioDTO cadastroUsuarioDTO) {
         this.nome = cadastroUsuarioDTO.nome();
@@ -38,6 +47,8 @@ public class Usuario implements UserDetails {
         this.login = cadastroUsuarioDTO.login();
         this.senha = cadastroUsuarioDTO.senha();
         this.tipoUsuario = cadastroUsuarioDTO.tipoUsuario();
+        this.dataAtivacao = cadastroUsuarioDTO.dataAtivacao();
+        this.dataInativacao = cadastroUsuarioDTO.dataInativacao();
     }
 
 
@@ -111,5 +122,21 @@ public class Usuario implements UserDetails {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public void setDataAtivacao(LocalDate dataAtivacao) {this.dataAtivacao = dataAtivacao;}
+
+    public void setDataInativacao(LocalDate dataInativacao) {this.dataInativacao = dataInativacao;}
+
+    public void atualizarInformacoes(EditarUsuarioDTO editarUsuarioDTO) {
+        if(editarUsuarioDTO.nome() != null) {
+            this.nome = editarUsuarioDTO.nome();
+        }
+        if(editarUsuarioDTO.cpf() != null) {
+            this.cpf = editarUsuarioDTO.cpf();
+        }
+        if(editarUsuarioDTO.login() != null) {
+            this.login = editarUsuarioDTO.login();
+        }
     }
 }
