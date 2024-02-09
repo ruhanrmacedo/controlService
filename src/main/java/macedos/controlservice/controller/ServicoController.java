@@ -7,6 +7,7 @@ import macedos.controlservice.dto.servico.DetalhamentoServicoDTO;
 import macedos.controlservice.dto.servico.EditarServicosDTO;
 import macedos.controlservice.dto.tecnico.ListagemServicosDTO;
 import macedos.controlservice.entity.Servico;
+import macedos.controlservice.enums.TipoServico;
 import macedos.controlservice.service.ServicoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -141,5 +142,9 @@ public class ServicoController {
         Servico servicoDetalhar = servicoService.detalharServico(idServico);
         DetalhamentoServicoDTO detalhamentoServicoDTO = new DetalhamentoServicoDTO(servicoDetalhar);
         return ResponseEntity.ok(detalhamentoServicoDTO);
+    }
+    @GetMapping("/tipo-servico")
+    public ResponseEntity<?> getTipoServico() {
+        return ResponseEntity.ok(TipoServico.values());
     }
 }
