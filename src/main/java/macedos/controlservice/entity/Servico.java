@@ -40,6 +40,9 @@ public class Servico {
         if (dados.valorMacedo() != null) {
             this.valorMacedo = dados.valorMacedo();
         }
+        if (dados.tipoServico() != null) {
+            this.tipoServico = dados.tipoServico();
+        }
     }
 
     public void excluir() {

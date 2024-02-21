@@ -1,6 +1,7 @@
 package macedos.controlservice.service;
 
 import jakarta.validation.Valid;
+import macedos.controlservice.dto.usuario.DesligarUsuarioDTO;
 import macedos.controlservice.dto.usuario.EditarUsuarioDTO;
 import macedos.controlservice.dto.usuario.UsuarioDTO;
 import macedos.controlservice.dto.usuario.UsuarioDetalhesDTO;
@@ -88,6 +89,12 @@ public class UsuarioService {
         } else {
             throw new IllegalStateException("Tipo de usuário principal não é suportado.");
         }
+    }
+
+    public Usuario desligarUsuario(DesligarUsuarioDTO dados) {
+        var usuarioDesligado = usuarioRepository.getReferenceById(dados.id());
+        usuarioDesligado.desligarUsuario(dados);
+        return usuarioDesligado;
     }
 
 

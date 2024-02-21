@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import macedos.controlservice.dto.usuario.CadastroUsuarioDTO;
+import macedos.controlservice.dto.usuario.DesligarUsuarioDTO;
 import macedos.controlservice.dto.usuario.EditarUsuarioDTO;
 import macedos.controlservice.enums.TipoUsuario;
 import org.springframework.security.core.GrantedAuthority;
@@ -137,6 +138,12 @@ public class Usuario implements UserDetails {
         }
         if(editarUsuarioDTO.login() != null) {
             this.login = editarUsuarioDTO.login();
+        }
+    }
+
+    public void desligarUsuario(DesligarUsuarioDTO dados) {
+        if(dados.dataInativacao() != null) {
+            this.dataInativacao = dados.dataInativacao();
         }
     }
 }

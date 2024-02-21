@@ -75,4 +75,13 @@ public class UsuarioController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @PutMapping("/desligarUsuario")
+    @Transactional
+    @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
+    public ResponseEntity<DetalhamentoUsuarioDTO> desligarUsuario(@Valid @RequestBody DesligarUsuarioDTO dados) {
+        Usuario usuarioDesligado = usuarioService.desligarUsuario(dados);
+        DetalhamentoUsuarioDTO detalhamentoUsuarioDTO = new DetalhamentoUsuarioDTO(usuarioDesligado);
+        return ResponseEntity.ok(detalhamentoUsuarioDTO);
+    }
 }
