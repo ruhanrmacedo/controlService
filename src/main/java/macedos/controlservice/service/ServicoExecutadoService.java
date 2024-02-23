@@ -2,7 +2,7 @@ package macedos.controlservice.service;
 
 import macedos.controlservice.dto.servicoExecutado.RegistrarServicoDTO;
 import macedos.controlservice.entity.ServicoExecutado;
-import macedos.controlservice.exception.ValidacaoException;
+import macedos.controlservice.infra.exception.ValidacaoException;
 import macedos.controlservice.repository.ServicoExecutadoRepository;
 import macedos.controlservice.repository.ServicoRepository;
 import macedos.controlservice.repository.TecnicoRepository;

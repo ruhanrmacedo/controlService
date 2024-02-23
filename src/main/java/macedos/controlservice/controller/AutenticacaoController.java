@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 //@CrossOrigin(origins = "http://localhost:4200")
@@ -23,11 +25,20 @@ public class AutenticacaoController {
     private TokenService tokenService;
 
     @PostMapping("/efetuarLogin")
-    public ResponseEntity efetuarLogin(@RequestBody @Valid AutenticacaoDTO autenticacaoDTO) {
-        var authenticationToken = new UsernamePasswordAuthenticationToken(autenticacaoDTO.login(), autenticacaoDTO.senha());
-        var authentication = authenticationManager.authenticate(authenticationToken);
+    public ResponseEntity<?> efetuarLogin(@RequestBody @Valid AutenticacaoDTO autenticacaoDTO) {
+        try {
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(autenticacaoDTO.login(), autenticacaoDTO.senha());
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
-        var tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());
-        return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
+            // Supondo que sua implementação de UserDetailsService configure corretamente as autoridades.
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+            // Agora, você gera o token com base no nome de usuário (login)
+            String tokenJWT = tokenService.gerarToken(userDetails.getUsername());
+
+            return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro na autenticação: " + e.getMessage());
+        }
     }
 }

@@ -1,4 +1,4 @@
-package macedos.controlservice.exception;
+package macedos.controlservice.infra.exception;
 
 public class ServicoNotFoundException extends RuntimeException {
     public ServicoNotFoundException(String mensagem) {

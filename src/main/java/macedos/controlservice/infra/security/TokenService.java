@@ -18,12 +18,12 @@ public class TokenService {
     @Value("${controlService.security.token.secret}")
     private String secret;
 
-    public String gerarToken(Usuario usuario) {
+    public String gerarToken(String username) {
         try {
             var algoritmo = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("controlService")
-                    .withSubject(usuario.getLogin())
+                    .withSubject(username)
                     .withExpiresAt(dataExpiracao())
                     .sign(algoritmo);
         } catch (JWTCreationException exception){

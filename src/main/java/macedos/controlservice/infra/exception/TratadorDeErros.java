@@ -57,4 +57,9 @@ public class TratadorDeErros {
         }
     }
 
+    @ExceptionHandler(UsuarioDesligadoException.class)
+    public ResponseEntity<String> tratarUsuarioDesligado(UsuarioDesligadoException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
 }
