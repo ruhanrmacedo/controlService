@@ -76,6 +76,12 @@ public class UsuarioController {
         }
     }
 
+    @PutMapping("/alterarSenhaUsuarioSelecionado/{usuarioId}")
+    public ResponseEntity<Void> alterarSenhaUsuarioSelecionado(@PathVariable Long usuarioId, @Valid @RequestBody AlterarSenhaDTO alterarSenhaDTO) {
+        usuarioService.alterarSenhaUsuarioSelecionado(usuarioId, alterarSenhaDTO.novaSenha(), alterarSenhaDTO.confirmarSenha());
+        return ResponseEntity.ok().build();
+    }
+
     @PutMapping("/desligarUsuario")
     @Transactional
     @Secured({"ROLE_GERENTE", "ROLE_ROOT"})

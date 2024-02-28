@@ -91,6 +91,19 @@ public class UsuarioService {
         }
     }
 
+    public void alterarSenhaUsuarioSelecionado(Long usuarioId, String novaSenha, String confirmarSenha) {
+        if (!novaSenha.equals(confirmarSenha)) {
+            throw new IllegalArgumentException("As senhas não coincidem!");
+        }
+
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o ID: " + usuarioId));
+
+        String senhaCriptografada = passwordEncoder.encode(novaSenha);
+        usuario.setSenha(senhaCriptografada);
+        usuarioRepository.save(usuario);
+    }
+
     public Usuario desligarUsuario(DesligarUsuarioDTO dados) {
         var usuarioDesligado = usuarioRepository.getReferenceById(dados.id());
         usuarioDesligado.desligarUsuario(dados);
