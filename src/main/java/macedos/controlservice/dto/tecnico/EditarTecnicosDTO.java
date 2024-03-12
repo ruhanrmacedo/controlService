@@ -6,6 +6,7 @@ public record EditarTecnicosDTO(
         @NotNull
         Long idTecnico,
         String nome,
+        String cpf,
         String login,
         String placa) {
 

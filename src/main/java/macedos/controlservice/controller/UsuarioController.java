@@ -90,4 +90,19 @@ public class UsuarioController {
         DetalhamentoUsuarioDTO detalhamentoUsuarioDTO = new DetalhamentoUsuarioDTO(usuarioDesligado);
         return ResponseEntity.ok(detalhamentoUsuarioDTO);
     }
+
+    @PutMapping("/readmitirUsuario/{id}")
+    @Transactional
+    @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
+    public ResponseEntity<?> readmitirUsuario(@PathVariable Long id) {
+        try {
+            ReadimitirUsuarioDTO readimitirUsuarioDTO = new ReadimitirUsuarioDTO(id);
+            Usuario usuarioReadmitido = usuarioService.readimitirUsuario(readimitirUsuarioDTO);
+            UsuarioDetalhesDTO usuarioDetalhesDTO = new UsuarioDetalhesDTO(usuarioReadmitido);
+            return ResponseEntity.ok(usuarioDetalhesDTO);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 }

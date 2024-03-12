@@ -1,10 +1,7 @@
 package macedos.controlservice.service;
 
 import jakarta.validation.Valid;
-import macedos.controlservice.dto.usuario.DesligarUsuarioDTO;
-import macedos.controlservice.dto.usuario.EditarUsuarioDTO;
-import macedos.controlservice.dto.usuario.UsuarioDTO;
-import macedos.controlservice.dto.usuario.UsuarioDetalhesDTO;
+import macedos.controlservice.dto.usuario.*;
 import macedos.controlservice.entity.Usuario;
 import macedos.controlservice.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 
 @Service
 public class UsuarioService {
@@ -108,6 +107,21 @@ public class UsuarioService {
         var usuarioDesligado = usuarioRepository.getReferenceById(dados.id());
         usuarioDesligado.desligarUsuario(dados);
         return usuarioDesligado;
+    }
+
+    public Usuario readimitirUsuario(ReadimitirUsuarioDTO readimitirUsuarioDTO) {
+        Usuario usuario = usuarioRepository.findById(readimitirUsuarioDTO.id())
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o ID: " + readimitirUsuarioDTO.id()));
+
+        if (usuario.getDataInativacao() == null) {
+            throw new IllegalStateException("Usuário já está ativo.");
+        }
+
+        usuario.setDataInativacao(null);
+        usuario.setDataAtivacao(LocalDate.now());
+        usuarioRepository.save(usuario);
+
+        return usuario;
     }
 
 
