@@ -12,6 +12,7 @@ import macedos.controlservice.service.ServicoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +55,7 @@ public class ServicoController {
      * com informações limitadas (id, descrição e tipo de serviço) em formato DTO (ListagemServicosDTO).
      */
     @GetMapping("/listarServicos")
-    public ResponseEntity<Page<ListagemServicosDTO>> listar(Pageable paginacao) {
+    public ResponseEntity<Page<ListagemServicosDTO>> listar(@PageableDefault (sort = "descricao") Pageable paginacao) {
         // O serviço servicosAtivos contém apenas informações limitadas (id, descrição e tipo de serviço).
         // Todos os usuários tem acesso a esta lista.
         Page<Servico> servicosAtivos = servicoService.listarServicosAtivos(paginacao);
@@ -71,10 +72,10 @@ public class ServicoController {
      */
     @GetMapping("/listarServicosGerente")
     @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
-    public ResponseEntity<List<Servico>> listagemServicosGerente() {
+    public ResponseEntity<Page<Servico>> listagemServicosGerente(@PageableDefault (sort = "descricao") Pageable paginacao) {
         // O serviço retorna uma lista de todos os serviços, incluindo todas as informações.
         // Este endpoint está disponível para os usuários GERENTE e ROOT.
-        List<Servico> servicos = servicoService.listagemServicosGerente();
+        Page<Servico> servicos = servicoService.listagemServicosGerente(paginacao);
         return ResponseEntity.ok(servicos);
     }
 

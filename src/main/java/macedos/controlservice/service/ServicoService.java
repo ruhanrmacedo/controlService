@@ -30,8 +30,8 @@ public class ServicoService {
         return servicoRepository.findByAtivoTrue(paginacao);
     }
 
-    public List<Servico> listagemServicosGerente() {
-        return servicoRepository.findAll();
+    public Page<Servico> listagemServicosGerente(Pageable paginacao) {
+        return servicoRepository.findAllByOrderByDescricao(paginacao);
     }
 
     public Servico editarServicos(EditarServicosDTO dados) {
