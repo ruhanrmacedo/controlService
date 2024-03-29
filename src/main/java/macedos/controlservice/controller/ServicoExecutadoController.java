@@ -4,15 +4,18 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import macedos.controlservice.dto.servicoExecutado.DetalhamentoRegistrarServDTO;
 import macedos.controlservice.dto.servicoExecutado.RegistrarServicoDTO;
+import macedos.controlservice.dto.servicoExecutado.ServicoExecutadoListagemDTO;
+import macedos.controlservice.entity.Servico;
 import macedos.controlservice.entity.ServicoExecutado;
 import macedos.controlservice.service.ServicoExecutadoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/servicoExecutado")
@@ -28,5 +31,17 @@ public class ServicoExecutadoController {
         ServicoExecutado servicoExecutado = new ServicoExecutado();
         servicoExecutadoService.registrarServico(dados);
         return ResponseEntity.ok(new DetalhamentoRegistrarServDTO(servicoExecutado.getId(), dados.contrato(), dados.os(), dados.data(), dados.idTecnico(), dados.idServico()));
+    }
+
+    @GetMapping("/listarServicosExecutados")
+    public ResponseEntity<?> listagemServicoExecutado(@PageableDefault(sort = "data") Pageable paginacao) {
+        try {
+            Page<ServicoExecutadoListagemDTO> servicosExecutadosDTO = servicoExecutadoService.listagemServicoExecutado(paginacao);
+            return ResponseEntity.ok(servicosExecutadosDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ocorreu um erro ao processar a sua requisição: " + e.getMessage());
+        }
     }
 }

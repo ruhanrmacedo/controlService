@@ -21,10 +21,10 @@ public class ServicoExecutado {
     private String contrato;
     private String os;
     private LocalDate data;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) // Altere de LAZY para EAGER
     @JoinColumn(name = "tecnico_id")
     private Tecnico tecnico;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) // Altere de LAZY para EAGER
     @JoinColumn(name = "servico_id")
     private Servico servico;
 }

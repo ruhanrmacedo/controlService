@@ -52,7 +52,12 @@ public class Usuario implements UserDetails {
         this.dataInativacao = cadastroUsuarioDTO.dataInativacao();
     }
 
-
+    @PrePersist
+    private void prePersist() {
+        if (dataAtivacao == null) {
+            dataAtivacao = LocalDate.now();
+        }
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

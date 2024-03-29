@@ -17,7 +17,6 @@ public record CadastroUsuarioDTO(
         String senha,
         @NotNull
         TipoUsuario tipoUsuario,
-        @NotNull
         LocalDate dataAtivacao,
         LocalDate dataInativacao) {
 }
