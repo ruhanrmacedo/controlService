@@ -148,4 +148,6 @@ public class ServicoController {
     public ResponseEntity<?> getTipoServico() {
         return ResponseEntity.ok(TipoServico.values());
     }
+
+
 }
