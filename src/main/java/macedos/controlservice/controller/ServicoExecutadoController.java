@@ -3,6 +3,7 @@ package macedos.controlservice.controller;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import macedos.controlservice.dto.servicoExecutado.DetalhamentoRegistrarServDTO;
+import macedos.controlservice.dto.servicoExecutado.EditarServicoExecutadoDTO;
 import macedos.controlservice.dto.servicoExecutado.RegistrarServicoDTO;
 import macedos.controlservice.dto.servicoExecutado.ServicoExecutadoListagemDTO;
 import macedos.controlservice.entity.Servico;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +36,7 @@ public class ServicoExecutadoController {
     }
 
     @GetMapping("/listarServicosExecutados")
+    @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
     public ResponseEntity<?> listagemServicoExecutado(@PageableDefault(sort = "data") Pageable paginacao) {
         try {
             Page<ServicoExecutadoListagemDTO> servicosExecutadosDTO = servicoExecutadoService.listagemServicoExecutado(paginacao);
@@ -43,5 +46,21 @@ public class ServicoExecutadoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ocorreu um erro ao processar a sua requisição: " + e.getMessage());
         }
+    }
+
+    @DeleteMapping("/excluirServicoExecutado/{id}")
+    @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
+    public ResponseEntity excluirServicoExecutado(@PathVariable Long id) {
+        servicoExecutadoService.excluirServicoExecutado(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/editarServicoExecutado")
+    @Transactional
+    @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
+    public ResponseEntity<DetalhamentoRegistrarServDTO> editarServicoExecutado(@Valid @RequestBody EditarServicoExecutadoDTO dados) {
+        ServicoExecutado servicoEditado = servicoExecutadoService.editarServicoExecutado(dados);
+        DetalhamentoRegistrarServDTO detalhamentoRegistrarServDTO = new DetalhamentoRegistrarServDTO(servicoEditado);
+        return ResponseEntity.ok(detalhamentoRegistrarServDTO);
     }
 }

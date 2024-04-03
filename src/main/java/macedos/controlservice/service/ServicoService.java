@@ -51,9 +51,9 @@ public class ServicoService {
         servicoRepository.deleteById(idServico);
     }
 
-    public Servico detalharServico (Long idServico) {
-        var servicoDetalhar = servicoRepository.getReferenceById(idServico);
-        return servicoDetalhar;
+    public Servico detalharServico(Long idServico) {
+        return servicoRepository.findById(idServico)
+                .orElseThrow(() -> new RuntimeException("Serviço não encontrado."));
     }
 
     public Optional<Servico> buscarServicoPorId(Long idServico){

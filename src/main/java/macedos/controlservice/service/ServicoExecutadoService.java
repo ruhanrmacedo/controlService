@@ -1,8 +1,8 @@
 package macedos.controlservice.service;
 
+import macedos.controlservice.dto.servicoExecutado.EditarServicoExecutadoDTO;
 import macedos.controlservice.dto.servicoExecutado.RegistrarServicoDTO;
 import macedos.controlservice.dto.servicoExecutado.ServicoExecutadoListagemDTO;
-import macedos.controlservice.entity.Servico;
 import macedos.controlservice.entity.ServicoExecutado;
 import macedos.controlservice.infra.exception.ValidacaoException;
 import macedos.controlservice.repository.ServicoExecutadoRepository;
@@ -12,6 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ServicoExecutadoService {
@@ -23,7 +27,7 @@ public class ServicoExecutadoService {
     @Autowired
     private ServicoRepository servicoRepository;
 
-    public void registrarServico(RegistrarServicoDTO dados) {
+    public ServicoExecutado registrarServico(RegistrarServicoDTO dados) {
         if (!tecnicoRepository.existsById(dados.idTecnico())) {
             throw new ValidacaoException("Id do técnico informado não existe!");
         }
@@ -34,8 +38,8 @@ public class ServicoExecutadoService {
         var tecnico = tecnicoRepository.getReferenceById(dados.idTecnico());
         var servico = servicoRepository.getReferenceById(dados.idServico());
 
-        var servicoExecutado = new ServicoExecutado(null, dados.contrato(), dados.os(), dados.data(), tecnico, servico);
-        servicoExecutadoRepository.save(servicoExecutado);
+        ServicoExecutado servicoExecutado = new ServicoExecutado(null, dados.contrato(), dados.os(), dados.data(), tecnico, servico);
+        return servicoExecutadoRepository.save(servicoExecutado);
     }
 
     public Page<ServicoExecutadoListagemDTO> listagemServicoExecutado(Pageable paginacao) {
@@ -62,4 +66,40 @@ public class ServicoExecutadoService {
         );
     }
 
+    public void excluirServicoExecutado(Long id){
+        servicoExecutadoRepository.deleteById(id);
+    }
+
+    public ServicoExecutado editarServicoExecutado(EditarServicoExecutadoDTO dados) {
+        var servicoExecutado = servicoExecutadoRepository.getReferenceById(dados.id());
+        servicoExecutado.atualizarInformacoes(dados, tecnicoRepository, servicoRepository);
+        return servicoExecutadoRepository.save(servicoExecutado);
+    }
+
+    public Double calcularValorClaroPorMesEAno(int mes, int ano) {
+        // Encontrar todos os serviços executados no mês/ano especificado
+        List<ServicoExecutado> servicosDoMes = servicoExecutadoRepository.findAll().stream()
+                .filter(servico -> isMesmoMesEAno(servico.getData(), mes, ano))
+                .collect(Collectors.toList());
+
+        // Calcular o valorClaro total para esses serviços
+        Double valorTotalClaro = servicosDoMes.stream()
+                .mapToDouble(this::calcularValorClaroIndividual)
+                .sum();
+
+        return valorTotalClaro;
+    }
+
+    // Verifica se a data do serviço é no mês e ano especificados
+    private boolean isMesmoMesEAno(LocalDate data, int mes, int ano) {
+        return data.getMonthValue() == mes && data.getYear() == ano;
+    }
+
+    // Método para calcular o valorClaro de um único serviço executado
+    private Double calcularValorClaroIndividual(ServicoExecutado servicoExecutado) {
+        // Aqui vai a lógica para calcular o valor claro de um serviço individual
+        // Isso pode ser um valor fixo, um percentual do valor do serviço, etc.
+        // Exemplo: valor base do serviço + 10%
+        return servicoExecutado.getServico().getValorClaro() * 1;
+    }
 }

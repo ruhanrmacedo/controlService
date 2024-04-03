@@ -1,0 +1,17 @@
+package macedos.controlservice.dto.servicoExecutado;
+
+import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDate;
+
+public record EditarServicoExecutadoDTO(
+        @NotNull
+        Long id,
+        String contrato,
+        String os,
+        LocalDate data,
+        Long idTecnico,
+        Long idServico
+) {
+
+}
