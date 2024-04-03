@@ -2,10 +2,7 @@ package macedos.controlservice.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import macedos.controlservice.dto.servicoExecutado.DetalhamentoRegistrarServDTO;
-import macedos.controlservice.dto.servicoExecutado.EditarServicoExecutadoDTO;
-import macedos.controlservice.dto.servicoExecutado.RegistrarServicoDTO;
-import macedos.controlservice.dto.servicoExecutado.ServicoExecutadoListagemDTO;
+import macedos.controlservice.dto.servicoExecutado.*;
 import macedos.controlservice.entity.Servico;
 import macedos.controlservice.entity.ServicoExecutado;
 import macedos.controlservice.service.ServicoExecutadoService;
@@ -41,6 +38,21 @@ public class ServicoExecutadoController {
         try {
             Page<ServicoExecutadoListagemDTO> servicosExecutadosDTO = servicoExecutadoService.listagemServicoExecutado(paginacao);
             return ResponseEntity.ok(servicosExecutadosDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ocorreu um erro ao processar a sua requisição: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/resumoMensal")
+    @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
+    public ResponseEntity<?> obterResumoMensal(
+            @RequestParam int mes,
+            @RequestParam int ano) {
+        try {
+            ResumoMensalServicoDTO resumo = servicoExecutadoService.calcularResumoMensal(mes, ano);
+            return ResponseEntity.ok(resumo);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

@@ -112,9 +112,7 @@ public class ServicoExecutadoService {
     }
 
     public ResumoMensalServicoDTO calcularResumoMensal(int mes, int ano) {
-        List<ServicoExecutado> servicosDoMes = servicoExecutadoRepository.findAll().stream()
-                .filter(servico -> isMesmoMesEAno(servico.getData(), mes, ano))
-                .collect(Collectors.toList());
+        List<ServicoExecutado> servicosDoMes = servicoExecutadoRepository.encontrarPorMesEAno(mes, ano);
 
         double valorTotalClaro = servicosDoMes.stream()
                 .mapToDouble(this::calcularValorClaroIndividual)
