@@ -16,6 +16,8 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/servicoExecutado")
 @SecurityRequirement(name = "bearer-key")
@@ -59,6 +61,22 @@ public class ServicoExecutadoController {
                     .body("Ocorreu um erro ao processar a sua requisição: " + e.getMessage());
         }
     }
+
+    @GetMapping("/listarPorMesEAno")
+    @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
+    public ResponseEntity<?> listarServicosPorMesEAno(
+            @RequestParam int mes,
+            @RequestParam int ano) {
+        try {
+            List<ServicoExecutadoListagemDTO> servicosDoMes = servicoExecutadoService.listarServicosPorMesEAno(mes, ano);
+            return ResponseEntity.ok(servicosDoMes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ocorreu um erro ao processar a sua requisição: " + e.getMessage());
+        }
+    }
+
 
     @DeleteMapping("/excluirServicoExecutado/{id}")
     @Secured({"ROLE_GERENTE", "ROLE_ROOT"})

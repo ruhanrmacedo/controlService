@@ -127,4 +127,11 @@ public class ServicoExecutadoService {
         // Crie e retorne o DTO com as informações agregadas
         return new ResumoMensalServicoDTO(quantidadeServicos, valorTotalClaro, valorTotalMacedos);
     }
+
+    public List<ServicoExecutadoListagemDTO> listarServicosPorMesEAno(int mes, int ano) {
+        List<ServicoExecutado> servicosDoMes = servicoExecutadoRepository.encontrarPorMesEAno(mes, ano);
+        return servicosDoMes.stream()
+                .map(this::converterParaListagemDTO)
+                .collect(Collectors.toList());
+    }
 }
