@@ -2,6 +2,7 @@ package macedos.controlservice.service;
 
 import macedos.controlservice.dto.servicoExecutado.EditarServicoExecutadoDTO;
 import macedos.controlservice.dto.servicoExecutado.RegistrarServicoDTO;
+import macedos.controlservice.dto.servicoExecutado.ResumoMensalServicoDTO;
 import macedos.controlservice.dto.servicoExecutado.ServicoExecutadoListagemDTO;
 import macedos.controlservice.entity.ServicoExecutado;
 import macedos.controlservice.infra.exception.ValidacaoException;
@@ -101,5 +102,31 @@ public class ServicoExecutadoService {
         // Isso pode ser um valor fixo, um percentual do valor do serviço, etc.
         // Exemplo: valor base do serviço + 10%
         return servicoExecutado.getServico().getValorClaro() * 1;
+    }
+
+    private Double calcularValorMacedoIndividual(ServicoExecutado servicoExecutado) {
+        // Aqui vai a lógica para calcular o valor claro de um serviço individual
+        // Isso pode ser um valor fixo, um percentual do valor do serviço, etc.
+        // Exemplo: valor base do serviço + 10%
+        return servicoExecutado.getServico().getValorMacedo() * 1;
+    }
+
+    public ResumoMensalServicoDTO calcularResumoMensal(int mes, int ano) {
+        List<ServicoExecutado> servicosDoMes = servicoExecutadoRepository.findAll().stream()
+                .filter(servico -> isMesmoMesEAno(servico.getData(), mes, ano))
+                .collect(Collectors.toList());
+
+        double valorTotalClaro = servicosDoMes.stream()
+                .mapToDouble(this::calcularValorClaroIndividual)
+                .sum();
+
+        double valorTotalMacedos = servicosDoMes.stream()
+                .mapToDouble(this::calcularValorMacedoIndividual)
+                .sum();
+
+        int quantidadeServicos = servicosDoMes.size();
+
+        // Crie e retorne o DTO com as informações agregadas
+        return new ResumoMensalServicoDTO(quantidadeServicos, valorTotalClaro, valorTotalMacedos);
     }
 }
