@@ -9,6 +9,7 @@ import macedos.controlservice.dto.servicoExecutado.EditarServicoExecutadoDTO;
 import macedos.controlservice.repository.ServicoRepository;
 import macedos.controlservice.repository.TecnicoRepository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Table(name = "servicos_executados")
@@ -48,6 +49,7 @@ public class ServicoExecutado {
             this.servico = servicoRepository.findById(dados.idServico()).orElse(null);
         }
     }
+
 }
 
 
