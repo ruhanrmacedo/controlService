@@ -53,7 +53,7 @@ public interface ServicoExecutadoRepository extends JpaRepository<ServicoExecuta
     @Query("SELECT new macedos.controlservice.dto.comissaoTecnico.EvolucaoValorDTO(" +
             "EXTRACT(MONTH FROM se.data), " +
             "EXTRACT(YEAR FROM se.data), " +
-            "SUM(se.servico.valorMacedo)) " +
+            "SUM(se.servico.valorClaro)) " +
             "FROM ServicoExecutado se WHERE " +
             "se.data BETWEEN :inicio AND :fim AND " +
             "se.tecnico.idTecnico = :tecnicoId " +

@@ -81,12 +81,10 @@ public class ComissaoTecnicoService {
         return new ValoresExecutadosDTO(valorMacedoTotal, valorClaroTotal);
     }
 
-    public List<EvolucaoValorDTO> buscarEvolucaoValor(Long tecnicoId, LocalDate inicio, LocalDate fim) {
-        // Esta é uma lógica simplificada, você terá que adaptar conforme a estrutura do seu banco de dados
-        List<EvolucaoValorDTO> evolucao = new ArrayList<>();
-        // Aqui, você buscaria os dados relevantes do seu repositório para cada ponto de dados que você quer no gráfico
-        // e os adicionaria à lista evolucao.
-        return evolucao;
+    public List<EvolucaoValorDTO> buscarEvolucaoValor(Long tecnicoId) {
+        LocalDate fim = LocalDate.now(); // Corretamente recalculado a cada chamada
+        LocalDate inicio = fim.minusMonths(6);
+        return servicoExecutadoRepository.buscarEvolucaoValorMensalPorTecnico(tecnicoId, inicio, fim);
     }
 
     private BigDecimal calcularComissaoServico(BigDecimal valorServico, boolean bonus, int totalContratos) {

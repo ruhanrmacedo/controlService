@@ -56,11 +56,8 @@ public class ComissaoTecnicoController {
     }
 
     @GetMapping("/evolucao-valor")
-    public ResponseEntity<List<EvolucaoValorDTO>> getEvolucaoValor(
-            @RequestParam Long tecnicoId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim) {
-        List<EvolucaoValorDTO> evolucaoValor = comissaoTecnicoService.buscarEvolucaoValor(tecnicoId, inicio, fim);
+    public ResponseEntity<List<EvolucaoValorDTO>> getEvolucaoValor(@RequestParam Long tecnicoId) {
+        List<EvolucaoValorDTO> evolucaoValor = comissaoTecnicoService.buscarEvolucaoValor(tecnicoId);
         return ResponseEntity.ok(evolucaoValor);
     }
 }
