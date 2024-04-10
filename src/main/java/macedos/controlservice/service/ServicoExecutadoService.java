@@ -43,6 +43,9 @@ public class ServicoExecutadoService {
         return servicoExecutadoRepository.save(servicoExecutado);
     }
 
+    public Page<ServicoExecutado>  listarServExecuAdm(Pageable paginacao) {
+        return servicoExecutadoRepository.findAllByOrderByData(paginacao);
+    }
     public Page<ServicoExecutadoListagemDTO> listagemServicoExecutado(Pageable paginacao) {
         Page<ServicoExecutado> servicoExecutados = servicoExecutadoRepository.findAllByOrderByData(paginacao);
         return servicoExecutados.map(this::converterParaListagemDTO);

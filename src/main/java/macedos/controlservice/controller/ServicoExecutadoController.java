@@ -3,6 +3,7 @@ package macedos.controlservice.controller;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import macedos.controlservice.dto.servicoExecutado.*;
+import macedos.controlservice.dto.tecnico.ListagemServicosDTO;
 import macedos.controlservice.entity.Servico;
 import macedos.controlservice.entity.ServicoExecutado;
 import macedos.controlservice.service.ServicoExecutadoService;
@@ -34,8 +35,26 @@ public class ServicoExecutadoController {
         return ResponseEntity.ok(new DetalhamentoRegistrarServDTO(servicoExecutado.getId(), dados.contrato(), dados.os(), dados.data(), dados.idTecnico(), dados.idServico()));
     }
 
+
+    @GetMapping("/listarServicosExecutadosAdm")
+    // Todos os usuários tipo administrador tem acesso a esta lista.
+    public Page<ListagemServExecutadosAdmDTO> listarServExecuAdm(Pageable paginacao) {
+        Page<ServicoExecutado> servicosExecutadosAdm = servicoExecutadoService.listarServExecuAdm(paginacao);
+        Page<ListagemServExecutadosAdmDTO> servicosDTO = servicosExecutadosAdm.map(servicoExecutado -> new ListagemServExecutadosAdmDTO(
+                // aqui você chama o construtor da DTO passando os valores corretos
+                servicoExecutado.getId(),
+                servicoExecutado.getContrato(),
+                servicoExecutado.getOs(),
+                servicoExecutado.getData(),
+                servicoExecutado.getTecnico().getNome(), // presumindo que existe uma relação que permite você fazer isso
+                servicoExecutado.getServico().getDescricao() // o mesmo aqui
+        ));
+
+        return servicosDTO;
+    }
     @GetMapping("/listarServicosExecutados")
     @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
+    // Usuários tipo GERENTE e ROOT tem acesso a esta lista.
     public ResponseEntity<?> listagemServicoExecutado(@PageableDefault(sort = "data") Pageable paginacao) {
         try {
             Page<ServicoExecutadoListagemDTO> servicosExecutadosDTO = servicoExecutadoService.listagemServicoExecutado(paginacao);

@@ -8,6 +8,7 @@ import macedos.controlservice.service.ComissaoTecnicoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,6 +38,7 @@ public class ComissaoTecnicoController {
     }
 
     @GetMapping("/contratos-executados")
+    @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
     public ResponseEntity<List<ContratoExecutadoDTO>> getContratosExecutados(
             @RequestParam Long tecnicoId,
             @RequestParam int mes,
@@ -47,6 +49,7 @@ public class ComissaoTecnicoController {
     }
 
     @GetMapping("/valores-executados")
+    @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
     public ResponseEntity<ValoresExecutadosDTO> getValoresExecutados(
             @RequestParam Long tecnicoId,
             @RequestParam int mes,
@@ -56,6 +59,7 @@ public class ComissaoTecnicoController {
     }
 
     @GetMapping("/evolucao-valor")
+    @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
     public ResponseEntity<List<EvolucaoValorDTO>> getEvolucaoValor(@RequestParam Long tecnicoId) {
         List<EvolucaoValorDTO> evolucaoValor = comissaoTecnicoService.buscarEvolucaoValor(tecnicoId);
         return ResponseEntity.ok(evolucaoValor);

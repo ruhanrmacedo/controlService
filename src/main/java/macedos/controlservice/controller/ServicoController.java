@@ -55,9 +55,8 @@ public class ServicoController {
      * com informações limitadas (id, descrição e tipo de serviço) em formato DTO (ListagemServicosDTO).
      */
     @GetMapping("/listarServicos")
+    // Todos os usuários tipo administrador tem acesso a esta lista.
     public ResponseEntity<Page<ListagemServicosDTO>> listar(@PageableDefault (sort = "descricao") Pageable paginacao) {
-        // O serviço servicosAtivos contém apenas informações limitadas (id, descrição e tipo de serviço).
-        // Todos os usuários tem acesso a esta lista.
         Page<Servico> servicosAtivos = servicoService.listarServicosAtivos(paginacao);
         Page<ListagemServicosDTO> servicosDTO = servicosAtivos.map(ListagemServicosDTO::new);
 
