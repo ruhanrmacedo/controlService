@@ -48,8 +48,7 @@ import java.util.List;
                                                     @Param("mes") int mes,
                                                     @Param("ano") int ano);
 
-        // Para calcular a evolução do valor ao longo do tempo, você pode precisar de uma série de queries,
-        // dependendo de como você quer representar a evolução (diária, mensal, etc.). Aqui está um exemplo mensal:
+
         @Query("SELECT new macedos.controlservice.dto.comissaoTecnico.EvolucaoValorDTO(" +
                 "EXTRACT(MONTH FROM se.data), " +
                 "EXTRACT(YEAR FROM se.data), " +

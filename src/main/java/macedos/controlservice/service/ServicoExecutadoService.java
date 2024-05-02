@@ -1,9 +1,6 @@
 package macedos.controlservice.service;
 
-import macedos.controlservice.dto.servicoExecutado.EditarServicoExecutadoDTO;
-import macedos.controlservice.dto.servicoExecutado.RegistrarServicoDTO;
-import macedos.controlservice.dto.servicoExecutado.ResumoMensalServicoDTO;
-import macedos.controlservice.dto.servicoExecutado.ServicoExecutadoListagemDTO;
+import macedos.controlservice.dto.servicoExecutado.*;
 import macedos.controlservice.entity.ServicoExecutado;
 import macedos.controlservice.infra.exception.ValidacaoException;
 import macedos.controlservice.repository.ServicoExecutadoRepository;
@@ -108,12 +105,10 @@ public class ServicoExecutadoService {
     }
 
     private Double calcularValorMacedoIndividual(ServicoExecutado servicoExecutado) {
-        // Aqui vai a lógica para calcular o valor claro de um serviço individual
-        // Isso pode ser um valor fixo, um percentual do valor do serviço, etc.
-        // Exemplo: valor base do serviço + 10%
         return servicoExecutado.getServico().getValorMacedo() * 1;
     }
 
+    //Método responsável por calcular a quantidade de serviços, valor total Claro e valor total Macedos dentro do mês/ano solicitado pelo usuário
     public ResumoMensalServicoDTO calcularResumoMensal(int mes, int ano) {
         List<ServicoExecutado> servicosDoMes = servicoExecutadoRepository.encontrarPorMesEAno(mes, ano);
 
@@ -127,14 +122,35 @@ public class ServicoExecutadoService {
 
         int quantidadeServicos = servicosDoMes.size();
 
-        // Crie e retorne o DTO com as informações agregadas
         return new ResumoMensalServicoDTO(quantidadeServicos, valorTotalClaro, valorTotalMacedos);
     }
 
+    //Método listar os serviços registrados dentro do mês/ano solicitado
     public List<ServicoExecutadoListagemDTO> listarServicosPorMesEAno(int mes, int ano) {
         List<ServicoExecutado> servicosDoMes = servicoExecutadoRepository.encontrarPorMesEAno(mes, ano);
         return servicosDoMes.stream()
                 .map(this::converterParaListagemDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ServicoExecutado> calcularServicosDoAdmPorMesEAno(int mes, int ano) {
+        // A implementação será similar ao método 'listarServicosPorMesEAno', mas retornando uma lista filtrada
+        // adequada para usuários padrões, excluindo informações de valores.
+        List<ServicoExecutado> servicosDoMes = servicoExecutadoRepository.encontrarPorMesEAno(mes, ano);
+        return servicosDoMes; // Aqui você deve retornar a lista de ServicoExecutado diretamente
+    }
+
+    public List<ServicoExecutadoAdmListagemDTO> listarServicosDoAdmPorMesEAno(int mes, int ano) {
+        List<ServicoExecutado> servicosDoMes = servicoExecutadoRepository.encontrarPorMesEAno(mes, ano);
+        return servicosDoMes.stream()
+                .map(servico -> new ServicoExecutadoAdmListagemDTO(
+                        servico.getId(),
+                        servico.getContrato(),
+                        servico.getOs(),
+                        servico.getData(),
+                        servico.getTecnico().getNome(),
+                        servico.getServico().getDescricao()
+                ))
                 .collect(Collectors.toList());
     }
 }

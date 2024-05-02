@@ -2,6 +2,7 @@ package macedos.controlservice.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import macedos.controlservice.dto.ResumoMensalAdmDTO;
 import macedos.controlservice.dto.servicoExecutado.*;
 import macedos.controlservice.dto.tecnico.ListagemServicosDTO;
 import macedos.controlservice.entity.Servico;
@@ -81,14 +82,46 @@ public class ServicoExecutadoController {
         }
     }
 
+    @GetMapping("/calcularResumoMensalAdm")
+    public ResponseEntity<?> calcularResumoMensalUsuarioPadrao(
+            @RequestParam int mes,
+            @RequestParam int ano) {
+        try {
+            List<ServicoExecutado> servicosDoMes = servicoExecutadoService.calcularServicosDoAdmPorMesEAno(mes, ano);
+            int quantidadeServicos = servicosDoMes.size();
+
+            // Substitua 'ResumoMensalUsuarioPadraoDTO' por um DTO que inclui apenas a contagem
+            ResumoMensalAdmDTO resumo = new ResumoMensalAdmDTO(quantidadeServicos);
+            return ResponseEntity.ok(resumo);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ocorreu um erro ao processar a sua requisição: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/listarPorMesEAno")
-    @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
+    //Endpoint para listar os serviços registrados dentro do mês/ano solicitado
     public ResponseEntity<?> listarServicosPorMesEAno(
             @RequestParam int mes,
             @RequestParam int ano) {
         try {
             List<ServicoExecutadoListagemDTO> servicosDoMes = servicoExecutadoService.listarServicosPorMesEAno(mes, ano);
             return ResponseEntity.ok(servicosDoMes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ocorreu um erro ao processar a sua requisição: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/listarServicosAdmPorMesEAno")
+    public ResponseEntity<?> listarServicosAdmPorMesEAno(
+            @RequestParam int mes,
+            @RequestParam int ano) {
+        try {
+            List<ServicoExecutadoAdmListagemDTO> servicosAdmListagem = servicoExecutadoService.listarServicosDoAdmPorMesEAno(mes, ano);
+            return ResponseEntity.ok(servicosAdmListagem);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
