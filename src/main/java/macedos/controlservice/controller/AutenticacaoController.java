@@ -2,7 +2,6 @@ package macedos.controlservice.controller;
 
 import jakarta.validation.Valid;
 import macedos.controlservice.dto.autenticacao.AutenticacaoDTO;
-import macedos.controlservice.entity.Usuario;
 import macedos.controlservice.infra.security.DadosTokenJWT;
 import macedos.controlservice.infra.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-//@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("api/login")
 public class AutenticacaoController {
@@ -27,13 +25,13 @@ public class AutenticacaoController {
     @PostMapping("/efetuarLogin")
     public ResponseEntity<?> efetuarLogin(@RequestBody @Valid AutenticacaoDTO autenticacaoDTO) {
         try {
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(autenticacaoDTO.login(), autenticacaoDTO.senha());
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(autenticacaoDTO.login(), autenticacaoDTO.senha());
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
-            // Supondo que sua implementação de UserDetailsService configure corretamente as autoridades.
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-            // Agora, você gera o token com base no nome de usuário (login)
+            // Gera o token com base no nome de usuário (login)
             String tokenJWT = tokenService.gerarToken(userDetails.getUsername());
 
             return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));

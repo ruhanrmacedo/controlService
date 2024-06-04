@@ -1,5 +1,6 @@
 package macedos.controlservice.dto.tecnico;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import macedos.controlservice.entity.Tecnico;
 
 import java.time.LocalDate;
@@ -15,9 +16,9 @@ public record DetalhamentoTecnicoDTO(
 
         String placa,
 
-        LocalDate dataAdmissao,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy") LocalDate dataAdmissao,
 
-        LocalDate dataDesligamento) {
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy") LocalDate dataDesligamento) {
 
     public DetalhamentoTecnicoDTO(Tecnico tecnico){
         this(

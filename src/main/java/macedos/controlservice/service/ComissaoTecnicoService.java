@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,8 +80,9 @@ public class ComissaoTecnicoService {
         return new ValoresExecutadosDTO(valorMacedoTotal, valorClaroTotal);
     }
 
-    public List<EvolucaoValorDTO> buscarEvolucaoValor(Long tecnicoId) {
-        LocalDate fim = LocalDate.now(); // Corretamente recalculado a cada chamada
+    // Método para buscar a evolução do valor Claro por mês
+    public List<Object[]> buscarEvolucaoValor(Long tecnicoId) {
+        LocalDate fim = LocalDate.now();
         LocalDate inicio = fim.minusMonths(6);
         return servicoExecutadoRepository.buscarEvolucaoValorMensalPorTecnico(tecnicoId, inicio, fim);
     }

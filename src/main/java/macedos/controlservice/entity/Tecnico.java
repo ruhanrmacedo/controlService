@@ -25,9 +25,9 @@ public class Tecnico {
     private String cpf;
     private String login;
     private String placa;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate dataAdmissao;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @Column(name = "data_desligamento")
     private LocalDate dataDesligamento;
 
@@ -44,6 +44,9 @@ public class Tecnico {
     public void atualizarInformacoes(EditarTecnicosDTO dados) {
         if(dados.nome() != null) {
             this.nome = dados.nome();
+        }
+        if(dados.cpf() != null) {
+            this.cpf = dados.cpf();
         }
         if(dados.login() != null) {
             this.login = dados.login();

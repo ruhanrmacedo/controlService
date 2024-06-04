@@ -49,18 +49,17 @@ import java.util.List;
                                                     @Param("ano") int ano);
 
 
-        @Query("SELECT new macedos.controlservice.dto.comissaoTecnico.EvolucaoValorDTO(" +
-                "EXTRACT(MONTH FROM se.data), " +
+        @Query("SELECT EXTRACT(MONTH FROM se.data), " +
                 "EXTRACT(YEAR FROM se.data), " +
-                "SUM(se.servico.valorClaro)) " +
+                "SUM(se.servico.valorClaro) " +
                 "FROM ServicoExecutado se WHERE " +
                 "se.data BETWEEN :inicio AND :fim AND " +
                 "se.tecnico.idTecnico = :tecnicoId " +
                 "GROUP BY EXTRACT(MONTH FROM se.data), EXTRACT(YEAR FROM se.data) " +
                 "ORDER BY EXTRACT(YEAR FROM se.data), EXTRACT(MONTH FROM se.data)")
-        List<EvolucaoValorDTO> buscarEvolucaoValorMensalPorTecnico(@Param("tecnicoId") Long tecnicoId,
-                                                                   @Param("inicio") LocalDate inicio,
-                                                                   @Param("fim") LocalDate fim);
+        List<Object[]> buscarEvolucaoValorMensalPorTecnico(@Param("tecnicoId") Long tecnicoId,
+                                                           @Param("inicio") LocalDate inicio,
+                                                           @Param("fim") LocalDate fim);
 
 
 }
