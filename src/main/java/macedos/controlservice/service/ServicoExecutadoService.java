@@ -52,8 +52,8 @@ public class ServicoExecutadoService {
         // Lógica para buscar os nomes e descrições
         String nomeTecnico = servicoExecutado.getTecnico().getNome();
         String descricaoServico = servicoExecutado.getServico().getDescricao();
-        Double valorClaro = servicoExecutado.getServico().getValorClaro();
-        Double valorMacedo = servicoExecutado.getServico().getValorMacedo();
+        Double valor1 = servicoExecutado.getServico().getValor1();
+        Double valor2 = servicoExecutado.getServico().getValor2();
 
         return new ServicoExecutadoListagemDTO(
                 servicoExecutado.getId(),
@@ -62,8 +62,8 @@ public class ServicoExecutadoService {
                 servicoExecutado.getData(),
                 nomeTecnico,
                 descricaoServico,
-                valorClaro,
-                valorMacedo
+                valor1,
+                valor2
         );
     }
 
@@ -77,18 +77,18 @@ public class ServicoExecutadoService {
         return servicoExecutadoRepository.save(servicoExecutado);
     }
 
-    public Double calcularValorClaroPorMesEAno(int mes, int ano) {
+    public Double calcularValor1PorMesEAno(int mes, int ano) {
         // Encontrar todos os serviços executados no mês/ano especificado
         List<ServicoExecutado> servicosDoMes = servicoExecutadoRepository.findAll().stream()
                 .filter(servico -> isMesmoMesEAno(servico.getData(), mes, ano))
                 .collect(Collectors.toList());
 
-        // Calcular o valorClaro total para esses serviços
-        Double valorTotalClaro = servicosDoMes.stream()
-                .mapToDouble(this::calcularValorClaroIndividual)
+        // Calcular o valor1 total para esses serviços
+        Double valorTotal1 = servicosDoMes.stream()
+                .mapToDouble(this::calcularValor1Individual)
                 .sum();
 
-        return valorTotalClaro;
+        return valorTotal1;
     }
 
     // Verifica se a data do serviço é no mês e ano especificados
@@ -96,33 +96,33 @@ public class ServicoExecutadoService {
         return data.getMonthValue() == mes && data.getYear() == ano;
     }
 
-    // Método para calcular o valorClaro de um único serviço executado
-    private Double calcularValorClaroIndividual(ServicoExecutado servicoExecutado) {
-        // Aqui vai a lógica para calcular o valor claro de um serviço individual
+    // Método para calcular o valor1 de um único serviço executado
+    private Double calcularValor1Individual(ServicoExecutado servicoExecutado) {
+        // Aqui vai a lógica para calcular o valor 1 de um serviço individual
         // Isso pode ser um valor fixo, um percentual do valor do serviço, etc.
         // Exemplo: valor base do serviço + 10%
-        return servicoExecutado.getServico().getValorClaro() * 1;
+        return servicoExecutado.getServico().getValor1() * 1;
     }
 
-    private Double calcularValorMacedoIndividual(ServicoExecutado servicoExecutado) {
-        return servicoExecutado.getServico().getValorMacedo() * 1;
+    private Double calcularValor2Individual(ServicoExecutado servicoExecutado) {
+        return servicoExecutado.getServico().getValor2() * 1;
     }
 
-    //Método responsável por calcular a quantidade de serviços, valor total Claro e valor total Macedos dentro do mês/ano solicitado pelo usuário
+    //Método responsável por calcular a quantidade de serviços, valor total 1 e valor total 2 dentro do mês/ano solicitado pelo usuário
     public ResumoMensalServicoDTO calcularResumoMensal(int mes, int ano) {
         List<ServicoExecutado> servicosDoMes = servicoExecutadoRepository.encontrarPorMesEAno(mes, ano);
 
-        double valorTotalClaro = servicosDoMes.stream()
-                .mapToDouble(this::calcularValorClaroIndividual)
+        double valorTotal1 = servicosDoMes.stream()
+                .mapToDouble(this::calcularValor1Individual)
                 .sum();
 
-        double valorTotalMacedos = servicosDoMes.stream()
-                .mapToDouble(this::calcularValorMacedoIndividual)
+        double valorTotal2 = servicosDoMes.stream()
+                .mapToDouble(this::calcularValor2Individual)
                 .sum();
 
         int quantidadeServicos = servicosDoMes.size();
 
-        return new ResumoMensalServicoDTO(quantidadeServicos, valorTotalClaro, valorTotalMacedos);
+        return new ResumoMensalServicoDTO(quantidadeServicos, valorTotal1, valorTotal2);
     }
 
     //Método listar os serviços registrados dentro do mês/ano solicitado

@@ -7,7 +7,7 @@ public record EditarServicosDTO(
         @NotNull
         Long idServico,
         String descricao,
-        Double valorClaro,
-        Double valorMacedo,
+        Double valor1,
+        Double valor2,
         TipoServico tipoServico){
 }

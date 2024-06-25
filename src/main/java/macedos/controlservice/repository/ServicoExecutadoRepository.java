@@ -25,10 +25,10 @@ import java.util.List;
                 "AND EXTRACT(YEAR FROM se.data) = :ano")
         int contarServicosPorTecnicoMesEAno(Long tecnicoId, int mes, int ano);
 
-        @Query("SELECT SUM(se.servico.valorMacedo) FROM ServicoExecutado se WHERE se.tecnico.idTecnico = :tecnicoId " +
+        @Query("SELECT SUM(se.servico.valor2) FROM ServicoExecutado se WHERE se.tecnico.idTecnico = :tecnicoId " +
                 "AND EXTRACT(MONTH FROM se.data) = :mes " +
                 "AND EXTRACT(YEAR FROM se.data) = :ano")
-        BigDecimal somarValorMacedoPorTecnicoMesEAno(Long tecnicoId, int mes, int ano);
+        BigDecimal somarValor2PorTecnicoMesEAno(Long tecnicoId, int mes, int ano);
 
         // Buscar serviços executados por técnico, mês e ano
         @Query("SELECT se FROM ServicoExecutado se WHERE " +
@@ -39,19 +39,19 @@ import java.util.List;
                                                           @Param("mes") int mes,
                                                           @Param("ano") int ano);
 
-        // Soma dos valores Claro para um técnico em um mês e ano específicos
-        @Query("SELECT SUM(se.servico.valorClaro) FROM ServicoExecutado se WHERE " +
+        // Soma dos valores 1 para um técnico em um mês e ano específicos
+        @Query("SELECT SUM(se.servico.valor1) FROM ServicoExecutado se WHERE " +
                 "se.tecnico.idTecnico = :tecnicoId AND " +
                 "EXTRACT(MONTH FROM se.data) = :mes AND " +
                 "EXTRACT(YEAR FROM se.data) = :ano")
-        BigDecimal somarValorClaroPorTecnicoMesEAno(@Param("tecnicoId") Long tecnicoId,
+        BigDecimal somarValor1PorTecnicoMesEAno(@Param("tecnicoId") Long tecnicoId,
                                                     @Param("mes") int mes,
                                                     @Param("ano") int ano);
 
-
+        // Busca a evolução do valor mensal dos serviços executados por um técnico dentro de um intervalo de datas
         @Query("SELECT EXTRACT(MONTH FROM se.data), " +
                 "EXTRACT(YEAR FROM se.data), " +
-                "SUM(se.servico.valorClaro) " +
+                "SUM(se.servico.valor1) " +
                 "FROM ServicoExecutado se WHERE " +
                 "se.data BETWEEN :inicio AND :fim AND " +
                 "se.tecnico.idTecnico = :tecnicoId " +
@@ -61,5 +61,17 @@ import java.util.List;
                                                            @Param("inicio") LocalDate inicio,
                                                            @Param("fim") LocalDate fim);
 
+        // Busca a evolução da quantidade de contratos executados por um técnico dentro de um intervalo de datas
+        @Query("SELECT EXTRACT(MONTH FROM se.data), " +
+                "EXTRACT(YEAR FROM se.data), " +
+                "COUNT(se.id) " +
+                "FROM ServicoExecutado se WHERE " +
+                "se.data BETWEEN :inicio AND :fim " +
+                "AND se.tecnico.idTecnico = :tecnicoId " +
+                "GROUP BY EXTRACT(MONTH FROM se.data), EXTRACT(YEAR FROM se.data) " +
+                "ORDER BY EXTRACT(YEAR FROM se.data), EXTRACT(MONTH FROM se.data)")
+        List<Object[]> buscarEvoContExePorTecnico(@Param("tecnicoId") Long tecnicoId,
+                                                  @Param("inicio") LocalDate inicio,
+                                                  @Param("fim") LocalDate fim);
 
 }

@@ -5,15 +5,15 @@ import macedos.controlservice.enums.TipoServico;
 
 public record DetalhamentoServicoDTO(Long idServico,
                                      String descricao,
-                                     Double valorClaro,
-                                     Double valorMacedo,
+                                     Double valor1,
+                                     Double valor2,
                                      TipoServico tipoServico) {
 
     public DetalhamentoServicoDTO(Servico servico) {
         this(servico.getIdServico(),
                 servico.getDescricao(),
-                servico.getValorClaro(),
-                servico.getValorMacedo(),
+                servico.getValor1(),
+                servico.getValor2(),
                 servico.getTipoServico());
     }
 

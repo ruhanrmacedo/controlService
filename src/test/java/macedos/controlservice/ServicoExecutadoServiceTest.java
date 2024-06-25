@@ -29,7 +29,7 @@ public class ServicoExecutadoServiceTest {
         // Exemplo: Adicionar um serviço executado para o mês/ano que será testado
         Tecnico tecnico = new Tecnico(/* parâmetros do técnico */);
         Servico servico = new Servico(/* parâmetros do serviço */);
-        servico.getValorClaro(); // Defina o valor claro para o serviço
+        servico.getValor1(); // Defina o valor claro para o serviço
 
         ServicoExecutado servicoExecutado = new ServicoExecutado(
                 /* id */ null,
@@ -44,9 +44,9 @@ public class ServicoExecutadoServiceTest {
     }
 
     @Test
-    public void calcularValorClaroPorMesEAno_deveRetornarValorCorreto() {
+    public void calcularValor1PorMesEAno_deveRetornarValorCorreto() {
         // Action
-        Double valorCalculado = servicoExecutadoService.calcularValorClaroPorMesEAno(2, 2024); // Substitua pelo mês/ano dos dados de teste
+        Double valorCalculado = servicoExecutadoService.calcularValor1PorMesEAno(2, 2024); // Substitua pelo mês/ano dos dados de teste
 
         // Assert
         Double valorEsperado = 100.0; // Substitua pelo valor claro total esperado com base nos dados de teste

@@ -24,8 +24,8 @@ public class AutenticacaoService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o login: " + username));
 
         // Verifica se o usuário foi desligado
-        if (usuario.getDataInativacao() != null && usuario.getDataInativacao().isBefore(LocalDate.now())) {
-            throw new UsuarioDesligadoException("Usuário " + username + " desligado do sistema.");
+        if (usuario.getDataInativacao() != null && usuario.getDataInativacao().isAfter(LocalDate.now())) {
+            throw new UsuarioDesligadoException("Usuário " + username + " inativado do sistema.");
         }
 
         return new User(usuario.getLogin(), usuario.getSenha(), usuario.getAuthorities());

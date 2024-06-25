@@ -5,10 +5,15 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import macedos.controlservice.entity.Usuario;
+import macedos.controlservice.infra.exception.UsuarioDesligadoException;
+import macedos.controlservice.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -18,8 +23,19 @@ public class TokenService {
     @Value("${controlService.security.token.secret}")
     private String secret;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     public String gerarToken(String username) {
         try {
+            // Verifica se o usuário está ativo antes de gerar o token
+            Usuario usuario = usuarioRepository.findByLogin(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o login: " + username));
+
+            if (usuario.getDataInativacao() != null && !usuario.getDataInativacao().isAfter(LocalDate.now())) {
+                throw new UsuarioDesligadoException("Usuário " + username + " inativado do sistema.");
+            }
+
             var algoritmo = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("controlService")

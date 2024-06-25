@@ -10,7 +10,9 @@ import macedos.controlservice.entity.ServicoExecutado;
 import macedos.controlservice.service.ServicoExecutadoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,16 +41,17 @@ public class ServicoExecutadoController {
 
     @GetMapping("/listarServicosExecutadosAdm")
     // Todos os usuários tipo administrador tem acesso a esta lista.
-    public Page<ListagemServExecutadosAdmDTO> listarServExecuAdm(Pageable paginacao) {
+    public Page<ListagemServExecutadosAdmDTO> listarServExecuAdm(@RequestParam int page, @RequestParam int size) {
+        Pageable paginacao = PageRequest.of(page, size, Sort.by("id").descending());
         Page<ServicoExecutado> servicosExecutadosAdm = servicoExecutadoService.listarServExecuAdm(paginacao);
         Page<ListagemServExecutadosAdmDTO> servicosDTO = servicosExecutadosAdm.map(servicoExecutado -> new ListagemServExecutadosAdmDTO(
-                // aqui você chama o construtor da DTO passando os valores corretos
+                // Chama o construtor da DTO passando os valores corretos
                 servicoExecutado.getId(),
                 servicoExecutado.getContrato(),
                 servicoExecutado.getOs(),
                 servicoExecutado.getData(),
-                servicoExecutado.getTecnico().getNome(), // presumindo que existe uma relação que permite você fazer isso
-                servicoExecutado.getServico().getDescricao() // o mesmo aqui
+                servicoExecutado.getTecnico().getNome(),
+                servicoExecutado.getServico().getDescricao()
         ));
 
         return servicosDTO;
@@ -56,7 +59,8 @@ public class ServicoExecutadoController {
     @GetMapping("/listarServicosExecutados")
     @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
     // Usuários tipo GERENTE e ROOT tem acesso a esta lista.
-    public ResponseEntity<?> listagemServicoExecutado(@PageableDefault(sort = "data") Pageable paginacao) {
+    public ResponseEntity<?> listagemServicoExecutado(@RequestParam int page, @RequestParam int size) {
+        Pageable paginacao = PageRequest.of(page, size, Sort.by("id").descending());
         try {
             Page<ServicoExecutadoListagemDTO> servicosExecutadosDTO = servicoExecutadoService.listagemServicoExecutado(paginacao);
             return ResponseEntity.ok(servicosExecutadosDTO);

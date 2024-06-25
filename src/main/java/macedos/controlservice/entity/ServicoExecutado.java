@@ -1,5 +1,6 @@
 package macedos.controlservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -24,6 +25,7 @@ public class ServicoExecutado {
     private Long id;
     private String contrato;
     private String os;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate data;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tecnico_id")

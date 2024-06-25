@@ -20,27 +20,29 @@ public class ComissaoTecnicoService {
     @Autowired
     private ServicoExecutadoRepository servicoExecutadoRepository;
 
+    //Calcula a comissão de um técnico para um mês e ano específicos.
     public BigDecimal calcularComissao(Long tecnicoId, int mes, int ano, boolean bonus) {
         int numeroContratos = servicoExecutadoRepository.contarServicosPorTecnicoMesEAno(tecnicoId, mes, ano);
-        BigDecimal valorMacedoTotal = servicoExecutadoRepository.somarValorMacedoPorTecnicoMesEAno(tecnicoId, mes, ano);
+        BigDecimal valor2Total = servicoExecutadoRepository.somarValor2PorTecnicoMesEAno(tecnicoId, mes, ano);
 
-        // Assegura que valorMacedoTotal não seja null
-        valorMacedoTotal = valorMacedoTotal != null ? valorMacedoTotal : BigDecimal.ZERO;
+        // Assegura que valor2Total não seja null
+        valor2Total = valor2Total != null ? valor2Total : BigDecimal.ZERO;
 
         BigDecimal percentualComissao = calcularPercentualComissao(numeroContratos, bonus);
-        return valorMacedoTotal.multiply(percentualComissao).setScale(2, RoundingMode.HALF_UP);
+        return valor2Total.multiply(percentualComissao).setScale(2, RoundingMode.HALF_UP);
     }
 
+    //Calcula o percentual de comissão com base no número de contratos.
     private BigDecimal calcularPercentualComissao(int contratos, boolean bonus) {
         BigDecimal percentual;
         // Lógica para determinar o percentual com base no número de contratos
-        if (contratos >= 9) {
+        if (contratos >= 90) {
             percentual = new BigDecimal("0.035"); // 3,5%
-        } else if (contratos == 8) {
+        } else if (contratos >= 80) {
             percentual = new BigDecimal("0.03"); // 3%
-        } else if (contratos == 7) {
+        } else if (contratos >= 70) {
             percentual = new BigDecimal("0.025"); // 2,5%
-        } else if (contratos >= 6) {
+        } else if (contratos >= 60) {
             percentual = new BigDecimal("0.02"); // 2%
         } else {
             percentual = BigDecimal.ZERO;
@@ -57,8 +59,8 @@ public class ComissaoTecnicoService {
         int totalContratos = servicos.size(); // Obter o total de contratos para calcular o percentual de comissão
 
         return servicos.stream().map(servico -> {
-            BigDecimal valorMacedo = new BigDecimal(servico.getServico().getValorMacedo().toString());
-            BigDecimal comissao = calcularComissaoServico(valorMacedo, bonus, totalContratos); // Calcular a comissão para cada serviço
+            BigDecimal valor2 = new BigDecimal(servico.getServico().getValor2().toString());
+            BigDecimal comissao = calcularComissaoServico(valor2, bonus, totalContratos); // Calcular a comissão para cada serviço
 
             return new ContratoExecutadoDTO(
                     servico.getId(),
@@ -67,20 +69,20 @@ public class ComissaoTecnicoService {
                     servico.getData(),
                     servico.getTecnico().getNome(),
                     servico.getServico().getDescricao(),
-                    new BigDecimal(servico.getServico().getValorClaro().toString()),
-                    valorMacedo, // Já convertido para BigDecimal
+                    new BigDecimal(servico.getServico().getValor1().toString()),
+                    valor2, // Já convertido para BigDecimal
                     comissao // Comissão calculada individualmente para o serviço
             );
         }).collect(Collectors.toList());
     }
 
     public ValoresExecutadosDTO buscarValoresExecutados(Long tecnicoId, int mes, int ano) {
-        BigDecimal valorMacedoTotal = servicoExecutadoRepository.somarValorMacedoPorTecnicoMesEAno(tecnicoId, mes, ano);
-        BigDecimal valorClaroTotal = servicoExecutadoRepository.somarValorClaroPorTecnicoMesEAno(tecnicoId, mes, ano);
-        return new ValoresExecutadosDTO(valorMacedoTotal, valorClaroTotal);
+        BigDecimal valor2Total = servicoExecutadoRepository.somarValor2PorTecnicoMesEAno(tecnicoId, mes, ano);
+        BigDecimal valor1Total = servicoExecutadoRepository.somarValor1PorTecnicoMesEAno(tecnicoId, mes, ano);
+        return new ValoresExecutadosDTO(valor2Total, valor1Total);
     }
 
-    // Método para buscar a evolução do valor Claro por mês
+    // Método para buscar a evolução do valor 1 por mês
     public List<Object[]> buscarEvolucaoValor(Long tecnicoId) {
         LocalDate fim = LocalDate.now();
         LocalDate inicio = fim.minusMonths(6);
@@ -90,5 +92,11 @@ public class ComissaoTecnicoService {
     private BigDecimal calcularComissaoServico(BigDecimal valorServico, boolean bonus, int totalContratos) {
         BigDecimal percentualComissao = calcularPercentualComissao(totalContratos, bonus);
         return valorServico.multiply(percentualComissao).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public List<Object[]> buscarEvolucaoContratos(Long tecnicoId) {
+        LocalDate fim = LocalDate.now();
+        LocalDate inicio = fim.minusMonths(6);
+        return servicoExecutadoRepository.buscarEvoContExePorTecnico(tecnicoId, inicio, fim);
     }
 }

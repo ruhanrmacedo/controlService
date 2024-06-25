@@ -63,4 +63,10 @@ public class ComissaoTecnicoController {
         return ResponseEntity.ok(evolucaoValor);
     }
 
+    @GetMapping("/evolucao-contratos")
+    public ResponseEntity<List<Object[]>> getEvolucaoContratos(@RequestParam Long tecnicoId) {
+        List<Object[]> evolucaoContratos = comissaoTecnicoService.buscarEvolucaoContratos(tecnicoId);
+        return ResponseEntity.ok(evolucaoContratos);
+    }
+
 }

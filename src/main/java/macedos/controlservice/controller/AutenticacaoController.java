@@ -2,9 +2,11 @@ package macedos.controlservice.controller;
 
 import jakarta.validation.Valid;
 import macedos.controlservice.dto.autenticacao.AutenticacaoDTO;
+import macedos.controlservice.infra.exception.UsuarioDesligadoException;
 import macedos.controlservice.infra.security.DadosTokenJWT;
 import macedos.controlservice.infra.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,6 +37,8 @@ public class AutenticacaoController {
             String tokenJWT = tokenService.gerarToken(userDetails.getUsername());
 
             return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
+        } catch (UsuarioDesligadoException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro na autenticação: " + e.getMessage());
         }

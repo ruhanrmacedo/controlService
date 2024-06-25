@@ -8,9 +8,9 @@ public record CadastroServicoDTO(
         @NotBlank
         String descricao,
         @NotNull
-        double valorClaro,
+        double valor1,
         @NotNull
-        double valorMacedo,
+        double valor2,
         @NotNull
         TipoServico tipoServico) {
 }
