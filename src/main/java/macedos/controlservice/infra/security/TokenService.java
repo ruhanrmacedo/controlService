@@ -36,12 +36,12 @@ public class TokenService {
                 throw new UsuarioDesligadoException("Usuário " + username + " inativado do sistema.");
             }
 
-            var algoritmo = Algorithm.HMAC256(secret);
+            var algoritmo = Algorithm.HMAC256(secret); // Cabeçalho: especifica o algoritmo de assinatura
             return JWT.create()
-                    .withIssuer("controlService")
-                    .withSubject(username)
-                    .withExpiresAt(dataExpiracao())
-                    .sign(algoritmo);
+                    .withIssuer("controlService") // Carga Útil: declaração do emissor
+                    .withSubject(username) // Carga Útil: declaração do assunto
+                    .withExpiresAt(dataExpiracao()) // Carga Útil: declaração de expiração
+                    .sign(algoritmo); // Assinatura: criação da assinatura com o algoritmo especificado
         } catch (JWTCreationException exception){
             throw new RuntimeException("Erro ao gerar token jwt", exception);
         }

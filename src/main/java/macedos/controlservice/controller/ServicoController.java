@@ -29,14 +29,6 @@ public class ServicoController {
     @Autowired
     private ServicoService servicoService;
 
-    /**
-     * Endpoint para cadastrar um novo serviço, disponível apenas para os usuários GERENTE e ROOT.
-     *
-     * @param cadastroServicoDTO Os dados para cadastrar um novo serviço.
-     * @param uriBuilder O construtor de URIs para criar a URI de resposta.
-     * @return ResponseEntity contendo os detalhes do serviço cadastrado.
-     * Este endpoint está disponível apenas para os usuários GERENTE e ROOT.
-     */
     @PostMapping("/cadastrarServico")
     @Transactional
     @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
@@ -47,13 +39,6 @@ public class ServicoController {
             return ResponseEntity.created(uri).body(new DetalhamentoServicoDTO(servico));
     }
 
-    /**
-     * Endpoint para listar serviços disponíveis para os usuários ADMINISTRADOR, GERENTE E ROOT.
-     *
-     * @param paginacao A configuração de paginação.
-     * @return ResponseEntity contendo uma página de serviços disponíveis para o ADMINISTRADOR,
-     * com informações limitadas (id, descrição e tipo de serviço) em formato DTO (ListagemServicosDTO).
-     */
     @GetMapping("/listarServicos")
     // Todos os usuários tipo administrador tem acesso a esta lista.
     public ResponseEntity<Page<ListagemServicosDTO>> listar(@PageableDefault (sort = "descricao") Pageable paginacao) {
@@ -63,27 +48,21 @@ public class ServicoController {
         return ResponseEntity.ok(servicosDTO);
     }
 
-    /**
-     * Endpoint para listar todos os serviços disponíveis para os usuários GERENTE e ROOT.
-     *
-     * @return ResponseEntity contendo uma lista de todos os serviços disponíveis,
-     * incluindo todas as informações do serviço.
-     */
+    @GetMapping("/listarServicosAtivos")
+    // Todos os usuários tipo administrador tem acesso a esta lista.
+    public ResponseEntity<Page<Servico>> listarServicosAtivos(@PageableDefault (sort = "descricao") Pageable paginacao) {
+        Page<Servico> servicosAtivos = servicoService.listarServicosAtivos(paginacao);
+        return ResponseEntity.ok(servicosAtivos);
+    }
+
     @GetMapping("/listarServicosGerente")
     @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
     public ResponseEntity<Page<Servico>> listagemServicosGerente(@PageableDefault (sort = "descricao") Pageable paginacao) {
         // O serviço retorna uma lista de todos os serviços, incluindo todas as informações.
-        // Este endpoint está disponível para os usuários GERENTE e ROOT.
         Page<Servico> servicos = servicoService.listagemServicosGerente(paginacao);
         return ResponseEntity.ok(servicos);
     }
 
-    /**
-     * Endpoint para editar um serviço existente, disponível apenas para os usuários GERENTE e ROOT..
-     *
-     * @param dados Os dados de edição do serviço.
-     * @return ResponseEntity contendo os detalhes do serviço editado.
-     */
     @PutMapping("/editarServico")
     @Transactional
     @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
@@ -95,13 +74,6 @@ public class ServicoController {
         return ResponseEntity.ok(detalhamentoServicoDTO);
     }
 
-    /**
-     * Endpoint para marcar um serviço como inativo, disponível apenas para os usuários GERENTE e ROOT.
-     * O serviço continua no banco de dados com a flag "ativo" alterada para false.
-     *
-     * @param idServico O ID do serviço a ser marcado como inativo.
-     * @return ResponseEntity indicando o sucesso da operação.
-     */
     @DeleteMapping("/excluirServico/{idServico}")
     @Transactional
     @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
@@ -112,13 +84,6 @@ public class ServicoController {
         return ResponseEntity.noContent().build();
     }
 
-
-    /**
-     * Endpoint para excluir permanentemente um serviço do banco de dados, disponível apenas para o usuário ROOT.
-     *
-     * @param idServico O ID do serviço a ser excluído permanentemente.
-     * @return ResponseEntity indicando o sucesso da exclusão permanente.
-     */
     @DeleteMapping("/excluirServicoGerente/{idServico}")
     @Secured({"ROLE_ROOT"})
     public ResponseEntity excluirServicoGerente(@PathVariable Long idServico) {
@@ -128,12 +93,6 @@ public class ServicoController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Endpoint para detalhar informações de um serviço, disponível apenas para os usuários GERENTE e ROOT.
-     *
-     * @param idServico O ID do serviço a ser detalhado.
-     * @return ResponseEntity contendo os detalhes do serviço.
-     */
     @GetMapping("/detalharServico/{idServico}")
     @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
     public ResponseEntity detalharServico (@PathVariable Long idServico) {

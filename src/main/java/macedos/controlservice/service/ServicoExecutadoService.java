@@ -36,6 +36,11 @@ public class ServicoExecutadoService {
         var tecnico = tecnicoRepository.getReferenceById(dados.idTecnico());
         var servico = servicoRepository.getReferenceById(dados.idServico());
 
+        // Verificar se o serviço está ativo
+        if (!servico.isAtivo()) {
+            throw new ValidacaoException("O serviço informado não está ativo!");
+        }
+
         ServicoExecutado servicoExecutado = new ServicoExecutado(null, dados.contrato(), dados.os(), dados.data(), tecnico, servico);
         return servicoExecutadoRepository.save(servicoExecutado);
     }
