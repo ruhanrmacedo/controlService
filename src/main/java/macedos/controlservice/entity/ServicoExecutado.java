@@ -19,6 +19,13 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+@NamedEntityGraph(
+        name = "ServicoExecutado.graph",
+        attributeNodes = {
+                @NamedAttributeNode("tecnico"),
+                @NamedAttributeNode("servico")
+        }
+)
 public class ServicoExecutado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

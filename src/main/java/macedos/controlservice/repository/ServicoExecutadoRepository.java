@@ -4,6 +4,7 @@ import macedos.controlservice.dto.comissaoTecnico.EvolucaoValorDTO;
 import macedos.controlservice.entity.ServicoExecutado;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,11 +15,15 @@ import java.util.List;
 
     public interface ServicoExecutadoRepository extends JpaRepository<ServicoExecutado, Long > {
 
+        @EntityGraph(value = "ServicoExecutado.graph", type = EntityGraph.EntityGraphType.LOAD)
         Page<ServicoExecutado> findAllByOrderByData(Pageable paginacao);
 
-        @Query("SELECT se FROM ServicoExecutado se WHERE " +
-                "MONTH(se.data) = :mes AND YEAR(se.data) = :ano")
-        List<ServicoExecutado> encontrarPorMesEAno(int mes, int ano);
+        @Query("SELECT se FROM ServicoExecutado se " +
+                "JOIN FETCH se.servico " +
+                "JOIN FETCH se.tecnico " +
+                "WHERE MONTH(se.data) = :mes AND YEAR(se.data) = :ano")
+        List<ServicoExecutado> encontrarPorMesEAno(@Param("mes") int mes,
+                                                   @Param("ano") int ano);
 
         @Query("SELECT COUNT(se) FROM ServicoExecutado se WHERE se.tecnico.idTecnico = :tecnicoId " +
                 "AND EXTRACT(MONTH FROM se.data) = :mes " +
@@ -31,8 +36,10 @@ import java.util.List;
         BigDecimal somarValor2PorTecnicoMesEAno(Long tecnicoId, int mes, int ano);
 
         // Buscar serviços executados por técnico, mês e ano
-        @Query("SELECT se FROM ServicoExecutado se WHERE " +
-                "EXTRACT(MONTH FROM se.data) = :mes AND " +
+        @Query("SELECT se FROM ServicoExecutado se " +
+                "JOIN FETCH se.tecnico " +
+                "JOIN FETCH se.servico " +
+                "WHERE EXTRACT(MONTH FROM se.data) = :mes AND " +
                 "EXTRACT(YEAR FROM se.data) = :ano AND " +
                 "se.tecnico.idTecnico = :tecnicoId")
         List<ServicoExecutado> encontrarPorTecnicoMesEAno(@Param("tecnicoId") Long tecnicoId,
