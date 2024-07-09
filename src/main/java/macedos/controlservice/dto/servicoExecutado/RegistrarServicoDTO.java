@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public record RegistrarServicoDTO(
         @NotBlank
@@ -15,5 +16,8 @@ public record RegistrarServicoDTO(
         @NotNull
         Long idTecnico,
         @NotNull
-        Long idServico) {
+        Long idServico,
+        List<Long> servicosAdicionais,
+        Double bonificacao,
+        Double percentualAcaoFinalDeSemana) {
 }

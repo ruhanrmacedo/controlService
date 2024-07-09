@@ -12,6 +12,7 @@ import macedos.controlservice.repository.TecnicoRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Table(name = "servicos_executados")
 @Entity(name = "ServicoExecutado")
@@ -40,6 +41,19 @@ public class ServicoExecutado {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "servico_id")
     private Servico servico;
+    @ManyToMany
+    @JoinTable(
+            name = "servicos_executados_servico_adicional",
+            joinColumns = @JoinColumn(name = "servico_executado_id"),
+            inverseJoinColumns = @JoinColumn(name = "servico_adicional_id")
+    )
+    private List<Servico> servicosAdicionais;
+    @Column(name = "bonificacao")
+    private Double bonificacao;
+    @Column(name = "percentual_acao_final_de_semana")
+    private Double percentualAcaoFinalDeSemana;
+    @Column(name = "valor_total")
+    private Double valorTotal;
 
     public void atualizarInformacoes(EditarServicoExecutadoDTO dados, TecnicoRepository tecnicoRepository, ServicoRepository servicoRepository) {
         if (dados.contrato() != null) {
@@ -57,6 +71,34 @@ public class ServicoExecutado {
         if (dados.idServico() != null) {
             this.servico = servicoRepository.findById(dados.idServico()).orElse(null);
         }
+        if (dados.servicosAdicionais() != null) {
+            this.servicosAdicionais.clear();
+            dados.servicosAdicionais().forEach(idServicoAdicional -> {
+                Servico servicoAdicional = servicoRepository.findById(idServicoAdicional).orElse(null);
+                if (servicoAdicional != null) {
+                    this.servicosAdicionais.add(servicoAdicional);
+                }
+            });
+        }
+        if (dados.bonificacao() != null) {
+            this.bonificacao = dados.bonificacao();
+        }
+        if (dados.percentualAcaoFinalDeSemana() != null) {
+            this.percentualAcaoFinalDeSemana = dados.percentualAcaoFinalDeSemana();
+        }
+        this.valorTotal = calcularValorTotal(
+                this.servico.getValor1(),
+                this.servicosAdicionais,
+                this.bonificacao,
+                this.percentualAcaoFinalDeSemana
+        );
+    }
+
+    private Double calcularValorTotal(Double valorPrincipal, List<Servico> servicosAdicionais, Double bonificacao, Double percentualAcaoFinalDeSemana) {
+        Double valorTotalAdicionais = servicosAdicionais.stream().mapToDouble(Servico::getValor1).sum();
+        Double valorSubtotal = valorPrincipal + valorTotalAdicionais + (bonificacao != null ? bonificacao : 0);
+        Double valorAcaoFinalDeSemana = (percentualAcaoFinalDeSemana != null ? percentualAcaoFinalDeSemana : 0) * valorSubtotal / 100;
+        return valorSubtotal + valorAcaoFinalDeSemana;
     }
 
 }

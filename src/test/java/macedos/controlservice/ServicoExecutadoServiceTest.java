@@ -23,25 +23,7 @@ public class ServicoExecutadoServiceTest {
     @Autowired
     private ServicoExecutadoRepository servicoExecutadoRepository;
 
-    @BeforeEach
-    public void setup() {
-        // Aqui você pode configurar alguns dados de teste
-        // Exemplo: Adicionar um serviço executado para o mês/ano que será testado
-        Tecnico tecnico = new Tecnico(/* parâmetros do técnico */);
-        Servico servico = new Servico(/* parâmetros do serviço */);
-        servico.getValor1(); // Defina o valor claro para o serviço
 
-        ServicoExecutado servicoExecutado = new ServicoExecutado(
-                /* id */ null,
-                /* contrato */ "1234",
-                /* os */ "OS01",
-                /* data */ LocalDate.of(2023, 1, 15), // Substitua pelo mês/ano que quer testar
-                tecnico,
-                servico
-        );
-
-        servicoExecutadoRepository.save(servicoExecutado);
-    }
 
     @Test
     public void calcularValor1PorMesEAno_deveRetornarValorCorreto() {

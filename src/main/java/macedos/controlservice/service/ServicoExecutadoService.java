@@ -1,6 +1,7 @@
 package macedos.controlservice.service;
 
 import macedos.controlservice.dto.servicoExecutado.*;
+import macedos.controlservice.entity.Servico;
 import macedos.controlservice.entity.ServicoExecutado;
 import macedos.controlservice.infra.exception.ValidacaoException;
 import macedos.controlservice.repository.ServicoExecutadoRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,8 +43,38 @@ public class ServicoExecutadoService {
             throw new ValidacaoException("O serviço informado não está ativo!");
         }
 
-        ServicoExecutado servicoExecutado = new ServicoExecutado(null, dados.contrato(), dados.os(), dados.data(), tecnico, servico);
+        List<Servico> servicosAdicionais = dados.servicosAdicionais().stream()
+                .map(id -> servicoRepository.findById(id).orElse(null))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        Double valorTotal = calcularValorTotal(
+                servico.getValor1(),
+                servicosAdicionais,
+                dados.bonificacao(),
+                dados.percentualAcaoFinalDeSemana()
+        );
+
+        ServicoExecutado servicoExecutado = new ServicoExecutado(
+                null,
+                dados.contrato(),
+                dados.os(),
+                dados.data(),
+                tecnico,
+                servico,
+                servicosAdicionais,
+                dados.bonificacao(),
+                dados.percentualAcaoFinalDeSemana(),
+                valorTotal
+        );
         return servicoExecutadoRepository.save(servicoExecutado);
+    }
+
+    private Double calcularValorTotal(Double valorPrincipal, List<Servico> servicosAdicionais, Double bonificacao, Double percentualAcaoFinalDeSemana) {
+        Double valorTotalAdicionais = servicosAdicionais.stream().mapToDouble(Servico::getValor1).sum();
+        Double valorSubtotal = valorPrincipal + valorTotalAdicionais + (bonificacao != null ? bonificacao : 0);
+        Double valorAcaoFinalDeSemana = (percentualAcaoFinalDeSemana != null ? percentualAcaoFinalDeSemana : 0) * valorSubtotal / 100;
+        return valorSubtotal + valorAcaoFinalDeSemana;
     }
 
     public Page<ServicoExecutado>  listarServExecuAdm(Pageable paginacao) {
