@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public record RegistrarServicoDTO(
@@ -17,7 +18,11 @@ public record RegistrarServicoDTO(
         Long idTecnico,
         @NotNull
         Long idServico,
-        List<Long> servicosAdicionais,
-        Double bonificacao,
-        Double percentualAcaoFinalDeSemana) {
+        List<Long> servicosAdicionais
+) {
+        public RegistrarServicoDTO {
+                if (servicosAdicionais == null) {
+                        servicosAdicionais = List.of(); // inicializa como lista vazia
+                }
+        }
 }

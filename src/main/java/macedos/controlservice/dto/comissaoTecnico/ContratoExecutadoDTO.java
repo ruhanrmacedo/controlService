@@ -12,8 +12,9 @@ public record ContratoExecutadoDTO(
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")LocalDate data,
         String nomeTecnico,
         String descricaoServico,
+        String descricaoServicoAdicional,
         BigDecimal valor1,
-        BigDecimal valor2,
+        BigDecimal valorTotal,
         BigDecimal comissao
 ) {
 }

@@ -16,7 +16,8 @@ import java.util.List;
     public interface ServicoExecutadoRepository extends JpaRepository<ServicoExecutado, Long > {
 
         @EntityGraph(value = "ServicoExecutado.graph", type = EntityGraph.EntityGraphType.LOAD)
-        Page<ServicoExecutado> findAllByOrderByData(Pageable paginacao);
+        // filtrar por id decrescente
+        Page<ServicoExecutado> findAllByOrderByIdDesc(Pageable paginacao);
 
         @Query("SELECT se FROM ServicoExecutado se " +
                 "JOIN FETCH se.servico " +
@@ -34,6 +35,11 @@ import java.util.List;
                 "AND EXTRACT(MONTH FROM se.data) = :mes " +
                 "AND EXTRACT(YEAR FROM se.data) = :ano")
         BigDecimal somarValor2PorTecnicoMesEAno(Long tecnicoId, int mes, int ano);
+
+        @Query("SELECT SUM(se.valorTotal) FROM ServicoExecutado se WHERE se.tecnico.idTecnico = :tecnicoId " +
+                "AND EXTRACT(MONTH FROM se.data) = :mes " +
+                "AND EXTRACT(YEAR FROM se.data) = :ano")
+        BigDecimal somarValorTotalPorTecnicoMesEAno(Long tecnicoId, int mes, int ano);
 
         // Buscar serviços executados por técnico, mês e ano
         @Query("SELECT se FROM ServicoExecutado se " +
@@ -55,10 +61,10 @@ import java.util.List;
                                                     @Param("mes") int mes,
                                                     @Param("ano") int ano);
 
-        // Busca a evolução do valor mensal dos serviços executados por um técnico dentro de um intervalo de datas
+        // Busca a evolução do valor total mensal dos serviços executados por um técnico dentro de um intervalo de datas
         @Query("SELECT EXTRACT(MONTH FROM se.data), " +
                 "EXTRACT(YEAR FROM se.data), " +
-                "SUM(se.servico.valor1) " +
+                "SUM(se.valorTotal) " +
                 "FROM ServicoExecutado se WHERE " +
                 "se.data BETWEEN :inicio AND :fim AND " +
                 "se.tecnico.idTecnico = :tecnicoId " +

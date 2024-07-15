@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/servicoExecutado")
@@ -51,11 +52,15 @@ public class ServicoExecutadoController {
                 servicoExecutado.getOs(),
                 servicoExecutado.getData(),
                 servicoExecutado.getTecnico().getNome(),
-                servicoExecutado.getServico().getDescricao()
+                servicoExecutado.getServico().getDescricao(),
+                servicoExecutado.getServicosAdicionais().stream()
+                        .map(Servico::getDescricao)
+                        .collect(Collectors.joining(", ")) // Converte a lista para uma string separada por vírgulas
         ));
 
         return servicosDTO;
     }
+
     @GetMapping("/listarServicosExecutados")
     @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
     // Usuários tipo GERENTE e ROOT tem acesso a esta lista.

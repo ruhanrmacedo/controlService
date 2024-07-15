@@ -21,46 +21,46 @@ public class ComissaoTecnicoService {
     private ServicoExecutadoRepository servicoExecutadoRepository;
 
     //Calcula a comissão de um técnico para um mês e ano específicos.
-    public BigDecimal calcularComissao(Long tecnicoId, int mes, int ano, boolean bonus) {
+    public BigDecimal calcularComissao(Long tecnicoId, int mes, int ano) {
         int numeroContratos = servicoExecutadoRepository.contarServicosPorTecnicoMesEAno(tecnicoId, mes, ano);
-        BigDecimal valor2Total = servicoExecutadoRepository.somarValor2PorTecnicoMesEAno(tecnicoId, mes, ano);
+        BigDecimal valor1Total = servicoExecutadoRepository.somarValor1PorTecnicoMesEAno(tecnicoId, mes, ano);
 
-        // Assegura que valor2Total não seja null
-        valor2Total = valor2Total != null ? valor2Total : BigDecimal.ZERO;
+        // Assegura que valor1Total não seja null
+        valor1Total = valor1Total != null ? valor1Total : BigDecimal.ZERO;
 
-        BigDecimal percentualComissao = calcularPercentualComissao(numeroContratos, bonus);
-        return valor2Total.multiply(percentualComissao).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal percentualComissao = calcularPercentualComissao(numeroContratos);
+        return valor1Total.multiply(percentualComissao).setScale(2, RoundingMode.HALF_UP);
     }
 
     //Calcula o percentual de comissão com base no número de contratos.
-    private BigDecimal calcularPercentualComissao(int contratos, boolean bonus) {
+    private BigDecimal calcularPercentualComissao(int contratos) {
         BigDecimal percentual;
         // Lógica para determinar o percentual com base no número de contratos
-        if (contratos >= 90) {
-            percentual = new BigDecimal("0.035"); // 3,5%
+        if (contratos >= 100) {
+            percentual = new BigDecimal("0.06"); // 6%
+        } else if (contratos >= 90) {
+            percentual = new BigDecimal("0.055"); // 5,5%
         } else if (contratos >= 80) {
-            percentual = new BigDecimal("0.03"); // 3%
+            percentual = new BigDecimal("0.05"); // 5%
         } else if (contratos >= 70) {
-            percentual = new BigDecimal("0.025"); // 2,5%
+            percentual = new BigDecimal("0.045"); // 4,5%
         } else if (contratos >= 60) {
-            percentual = new BigDecimal("0.02"); // 2%
+            percentual = new BigDecimal("0.04"); // 4%
         } else {
             percentual = BigDecimal.ZERO;
         }
-        // Aplicando bônus, se houver
-        if (bonus) {
-            percentual = percentual.add(new BigDecimal("0.02")); // Bônus de 2%
-        }
+
         return percentual;
     }
 
-    public List<ContratoExecutadoDTO> buscarContratosExecutados(Long tecnicoId, int mes, int ano, boolean bonus) {
+    public List<ContratoExecutadoDTO> buscarContratosExecutados(Long tecnicoId, int mes, int ano) {
         List<ServicoExecutado> servicos = servicoExecutadoRepository.encontrarPorTecnicoMesEAno(tecnicoId, mes, ano);
         int totalContratos = servicos.size(); // Obter o total de contratos para calcular o percentual de comissão
 
         return servicos.stream().map(servico -> {
-            BigDecimal valor2 = new BigDecimal(servico.getServico().getValor2().toString());
-            BigDecimal comissao = calcularComissaoServico(valor2, bonus, totalContratos); // Calcular a comissão para cada serviço
+            BigDecimal valor1 = new BigDecimal(servico.getServico().getValor1().toString());
+            BigDecimal valorTotal = new BigDecimal(servico.getValorTotal().toString());
+            BigDecimal comissao = calcularComissaoServico(valor1, totalContratos); // Calcular a comissão para cada serviço
 
             return new ContratoExecutadoDTO(
                     servico.getId(),
@@ -69,17 +69,20 @@ public class ComissaoTecnicoService {
                     servico.getData(),
                     servico.getTecnico().getNome(),
                     servico.getServico().getDescricao(),
-                    new BigDecimal(servico.getServico().getValor1().toString()),
-                    valor2, // Já convertido para BigDecimal
+                    servico.getServicosAdicionais().stream()
+                            .map(servicoAdicional -> servicoAdicional.getDescricao())
+                            .collect(Collectors.joining(", ")), // Converte a lista para uma string separada por vírgulas
+                    valor1,
+                    valorTotal,// Já convertido para BigDecimal
                     comissao // Comissão calculada individualmente para o serviço
             );
         }).collect(Collectors.toList());
     }
 
     public ValoresExecutadosDTO buscarValoresExecutados(Long tecnicoId, int mes, int ano) {
-        BigDecimal valor2Total = servicoExecutadoRepository.somarValor2PorTecnicoMesEAno(tecnicoId, mes, ano);
         BigDecimal valor1Total = servicoExecutadoRepository.somarValor1PorTecnicoMesEAno(tecnicoId, mes, ano);
-        return new ValoresExecutadosDTO(valor2Total, valor1Total);
+        BigDecimal valorTotal = servicoExecutadoRepository.somarValorTotalPorTecnicoMesEAno(tecnicoId, mes, ano);
+        return new ValoresExecutadosDTO(valor1Total, valorTotal);
     }
 
     // Método para buscar a evolução do valor 1 por mês
@@ -89,8 +92,8 @@ public class ComissaoTecnicoService {
         return servicoExecutadoRepository.buscarEvolucaoValorMensalPorTecnico(tecnicoId, inicio, fim);
     }
 
-    private BigDecimal calcularComissaoServico(BigDecimal valorServico, boolean bonus, int totalContratos) {
-        BigDecimal percentualComissao = calcularPercentualComissao(totalContratos, bonus);
+    private BigDecimal calcularComissaoServico(BigDecimal valorServico, int totalContratos) {
+        BigDecimal percentualComissao = calcularPercentualComissao(totalContratos);
         return valorServico.multiply(percentualComissao).setScale(2, RoundingMode.HALF_UP);
     }
 

@@ -43,16 +43,15 @@ public class ServicoExecutadoService {
             throw new ValidacaoException("O serviço informado não está ativo!");
         }
 
-        List<Servico> servicosAdicionais = dados.servicosAdicionais().stream()
-                .map(id -> servicoRepository.findById(id).orElse(null))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        List<Servico> servicosAdicionais = dados.servicosAdicionais() != null ?
+                dados.servicosAdicionais().stream()
+                        .map(id -> servicoRepository.findById(id).orElse(null))
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList()) : List.of();
 
         Double valorTotal = calcularValorTotal(
                 servico.getValor1(),
-                servicosAdicionais,
-                dados.bonificacao(),
-                dados.percentualAcaoFinalDeSemana()
+                servicosAdicionais
         );
 
         ServicoExecutado servicoExecutado = new ServicoExecutado(
@@ -63,25 +62,22 @@ public class ServicoExecutadoService {
                 tecnico,
                 servico,
                 servicosAdicionais,
-                dados.bonificacao(),
-                dados.percentualAcaoFinalDeSemana(),
                 valorTotal
         );
         return servicoExecutadoRepository.save(servicoExecutado);
     }
 
-    private Double calcularValorTotal(Double valorPrincipal, List<Servico> servicosAdicionais, Double bonificacao, Double percentualAcaoFinalDeSemana) {
+    private Double calcularValorTotal(Double valorPrincipal, List<Servico> servicosAdicionais) {
         Double valorTotalAdicionais = servicosAdicionais.stream().mapToDouble(Servico::getValor1).sum();
-        Double valorSubtotal = valorPrincipal + valorTotalAdicionais + (bonificacao != null ? bonificacao : 0);
-        Double valorAcaoFinalDeSemana = (percentualAcaoFinalDeSemana != null ? percentualAcaoFinalDeSemana : 0) * valorSubtotal / 100;
-        return valorSubtotal + valorAcaoFinalDeSemana;
+        Double valorSubtotal = valorPrincipal + valorTotalAdicionais;
+        return valorSubtotal;
     }
 
     public Page<ServicoExecutado>  listarServExecuAdm(Pageable paginacao) {
-        return servicoExecutadoRepository.findAllByOrderByData(paginacao);
+        return servicoExecutadoRepository.findAllByOrderByIdDesc(paginacao);
     }
     public Page<ServicoExecutadoListagemDTO> listagemServicoExecutado(Pageable paginacao) {
-        Page<ServicoExecutado> servicoExecutados = servicoExecutadoRepository.findAllByOrderByData(paginacao);
+        Page<ServicoExecutado> servicoExecutados = servicoExecutadoRepository.findAllByOrderByIdDesc(paginacao);
         return servicoExecutados.map(this::converterParaListagemDTO);
     }
 
@@ -89,8 +85,11 @@ public class ServicoExecutadoService {
         // Lógica para buscar os nomes e descrições
         String nomeTecnico = servicoExecutado.getTecnico().getNome();
         String descricaoServico = servicoExecutado.getServico().getDescricao();
+        List<String> descricaoServicosAdicionais = servicoExecutado.getServicosAdicionais().stream()
+                .map(Servico::getDescricao)
+                .collect(Collectors.toList());
         Double valor1 = servicoExecutado.getServico().getValor1();
-        Double valor2 = servicoExecutado.getServico().getValor2();
+        Double valorTotal = servicoExecutado.getValorTotal();
 
         return new ServicoExecutadoListagemDTO(
                 servicoExecutado.getId(),
@@ -99,8 +98,9 @@ public class ServicoExecutadoService {
                 servicoExecutado.getData(),
                 nomeTecnico,
                 descricaoServico,
+                descricaoServicosAdicionais,
                 valor1,
-                valor2
+                valorTotal
         );
     }
 
@@ -128,6 +128,20 @@ public class ServicoExecutadoService {
         return valorTotal1;
     }
 
+    public Double calcularValorTotalPorMesEAno(int mes, int ano) {
+        // Encontrar todos os serviços executados no mês/ano especificado
+        List<ServicoExecutado> servicosDoMes = servicoExecutadoRepository.findAll().stream()
+                .filter(servico -> isMesmoMesEAno(servico.getData(), mes, ano))
+                .collect(Collectors.toList());
+
+        // Calcular o valor total para esses serviços
+        Double valorTotal = servicosDoMes.stream()
+                .mapToDouble(this::calcularValorTotalIndividual)
+                .sum();
+
+        return valorTotal;
+    }
+
     // Verifica se a data do serviço é no mês e ano especificados
     private boolean isMesmoMesEAno(LocalDate data, int mes, int ano) {
         return data.getMonthValue() == mes && data.getYear() == ano;
@@ -135,14 +149,11 @@ public class ServicoExecutadoService {
 
     // Método para calcular o valor1 de um único serviço executado
     private Double calcularValor1Individual(ServicoExecutado servicoExecutado) {
-        // Aqui vai a lógica para calcular o valor 1 de um serviço individual
-        // Isso pode ser um valor fixo, um percentual do valor do serviço, etc.
-        // Exemplo: valor base do serviço + 10%
-        return servicoExecutado.getServico().getValor1() * 1;
+        return servicoExecutado.getServico().getValor1();
     }
 
-    private Double calcularValor2Individual(ServicoExecutado servicoExecutado) {
-        return servicoExecutado.getServico().getValor2() * 1;
+    private Double calcularValorTotalIndividual(ServicoExecutado servicoExecutado) {
+        return servicoExecutado.getValorTotal();
     }
 
     //Método responsável por calcular a quantidade de serviços, valor total 1 e valor total 2 dentro do mês/ano solicitado pelo usuário
@@ -153,13 +164,13 @@ public class ServicoExecutadoService {
                 .mapToDouble(this::calcularValor1Individual)
                 .sum();
 
-        double valorTotal2 = servicosDoMes.stream()
-                .mapToDouble(this::calcularValor2Individual)
+        double valorTotal = servicosDoMes.stream()
+                .mapToDouble(this::calcularValorTotalIndividual)
                 .sum();
 
         int quantidadeServicos = servicosDoMes.size();
 
-        return new ResumoMensalServicoDTO(quantidadeServicos, valorTotal1, valorTotal2);
+        return new ResumoMensalServicoDTO(quantidadeServicos, valorTotal1, valorTotal);
     }
 
     //Método listar os serviços registrados dentro do mês/ano solicitado
@@ -186,8 +197,12 @@ public class ServicoExecutadoService {
                         servico.getOs(),
                         servico.getData(),
                         servico.getTecnico().getNome(),
-                        servico.getServico().getDescricao()
+                        servico.getServico().getDescricao(),
+                        servico.getServicosAdicionais().stream()
+                                .map(Servico::getDescricao)
+                                .collect(Collectors.joining(", "))
                 ))
                 .collect(Collectors.toList());
     }
+
 }

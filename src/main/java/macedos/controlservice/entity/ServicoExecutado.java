@@ -10,7 +10,6 @@ import macedos.controlservice.dto.servicoExecutado.EditarServicoExecutadoDTO;
 import macedos.controlservice.repository.ServicoRepository;
 import macedos.controlservice.repository.TecnicoRepository;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -48,10 +47,6 @@ public class ServicoExecutado {
             inverseJoinColumns = @JoinColumn(name = "servico_adicional_id")
     )
     private List<Servico> servicosAdicionais;
-    @Column(name = "bonificacao")
-    private Double bonificacao;
-    @Column(name = "percentual_acao_final_de_semana")
-    private Double percentualAcaoFinalDeSemana;
     @Column(name = "valor_total")
     private Double valorTotal;
 
@@ -80,25 +75,16 @@ public class ServicoExecutado {
                 }
             });
         }
-        if (dados.bonificacao() != null) {
-            this.bonificacao = dados.bonificacao();
-        }
-        if (dados.percentualAcaoFinalDeSemana() != null) {
-            this.percentualAcaoFinalDeSemana = dados.percentualAcaoFinalDeSemana();
-        }
         this.valorTotal = calcularValorTotal(
                 this.servico.getValor1(),
-                this.servicosAdicionais,
-                this.bonificacao,
-                this.percentualAcaoFinalDeSemana
+                this.servicosAdicionais
         );
     }
 
-    private Double calcularValorTotal(Double valorPrincipal, List<Servico> servicosAdicionais, Double bonificacao, Double percentualAcaoFinalDeSemana) {
+    private Double calcularValorTotal(Double valorPrincipal, List<Servico> servicosAdicionais) {
         Double valorTotalAdicionais = servicosAdicionais.stream().mapToDouble(Servico::getValor1).sum();
-        Double valorSubtotal = valorPrincipal + valorTotalAdicionais + (bonificacao != null ? bonificacao : 0);
-        Double valorAcaoFinalDeSemana = (percentualAcaoFinalDeSemana != null ? percentualAcaoFinalDeSemana : 0) * valorSubtotal / 100;
-        return valorSubtotal + valorAcaoFinalDeSemana;
+        Double valorSubtotal = valorPrincipal + valorTotalAdicionais;
+        return valorSubtotal;
     }
 
 }

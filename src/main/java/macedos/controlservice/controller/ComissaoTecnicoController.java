@@ -28,10 +28,9 @@ public class ComissaoTecnicoController {
     public ResponseEntity<BigDecimal> calcularComissao(
             @RequestParam Long tecnicoId,
             @RequestParam int mes,
-            @RequestParam int ano,
-            @RequestParam(defaultValue = "false") boolean bonus) {
+            @RequestParam int ano) {
 
-        BigDecimal comissaoCalculada = comissaoTecnicoService.calcularComissao(tecnicoId, mes, ano, bonus);
+        BigDecimal comissaoCalculada = comissaoTecnicoService.calcularComissao(tecnicoId, mes, ano);
         return ResponseEntity.ok(comissaoCalculada);
     }
 
@@ -40,9 +39,8 @@ public class ComissaoTecnicoController {
     public ResponseEntity<List<ContratoExecutadoDTO>> getContratosExecutados(
             @RequestParam Long tecnicoId,
             @RequestParam int mes,
-            @RequestParam int ano,
-            @RequestParam(defaultValue = "false") boolean bonus) {
-        List<ContratoExecutadoDTO> contratosExecutados = comissaoTecnicoService.buscarContratosExecutados(tecnicoId, mes, ano, bonus);
+            @RequestParam int ano) {
+        List<ContratoExecutadoDTO> contratosExecutados = comissaoTecnicoService.buscarContratosExecutados(tecnicoId, mes, ano);
         return ResponseEntity.ok(contratosExecutados);
     }
 

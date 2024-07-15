@@ -10,6 +10,7 @@ public record ListagemServExecutadosAdmDTO(
         String os,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy") LocalDate data,
         String nomeTecnico,
-        String descricaoServico
+        String descricaoServico,
+        String descricaoServicosAdicionais
 ) {
 }
