@@ -164,13 +164,13 @@ public class ServicoExecutadoService {
                 .mapToDouble(this::calcularValor1Individual)
                 .sum();
 
-        double valorTotal = servicosDoMes.stream()
+        double somaValorTotal = servicosDoMes.stream()
                 .mapToDouble(this::calcularValorTotalIndividual)
                 .sum();
 
         int quantidadeServicos = servicosDoMes.size();
 
-        return new ResumoMensalServicoDTO(quantidadeServicos, valorTotal1, valorTotal);
+        return new ResumoMensalServicoDTO(quantidadeServicos, valorTotal1, somaValorTotal);
     }
 
     //Método listar os serviços registrados dentro do mês/ano solicitado
