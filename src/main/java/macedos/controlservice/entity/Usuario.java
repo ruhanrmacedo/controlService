@@ -144,6 +144,9 @@ public class Usuario implements UserDetails {
         if(editarUsuarioDTO.login() != null) {
             this.login = editarUsuarioDTO.login();
         }
+        if(editarUsuarioDTO.tipoUsuario() != null)  {
+            this.tipoUsuario = editarUsuarioDTO.tipoUsuario();
+        }
     }
 
     public void desligarUsuario(DesligarUsuarioDTO dados) {
