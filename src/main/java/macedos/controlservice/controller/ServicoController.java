@@ -57,7 +57,7 @@ public class ServicoController {
 
     @GetMapping("/listarServicosGerente")
     @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
-    public ResponseEntity<Page<Servico>> listagemServicosGerente(@PageableDefault (sort = "descricao") Pageable paginacao) {
+    public ResponseEntity<Page<Servico>> listagemServicosGerente(@PageableDefault (sort = "idServico") Pageable paginacao) {
         // O serviço retorna uma lista de todos os serviços, incluindo todas as informações.
         Page<Servico> servicos = servicoService.listagemServicosGerente(paginacao);
         return ResponseEntity.ok(servicos);

@@ -11,5 +11,5 @@ public interface ServicoRepository extends JpaRepository<Servico, Long> {
 
     Page<Servico> findByAtivoTrue(Pageable paginacao);
 
-    Page<Servico> findAllByOrderByDescricao(Pageable paginacao);
+    Page<Servico> findAllByOrderByIdServicoDesc(Pageable paginacao);
 }

@@ -31,7 +31,7 @@ public class ServicoService {
     }
 
     public Page<Servico> listagemServicosGerente(Pageable paginacao) {
-        return servicoRepository.findAllByOrderByDescricao(paginacao);
+        return servicoRepository.findAllByOrderByIdServicoDesc(paginacao);
     }
 
     public Servico editarServicos(EditarServicosDTO dados) {
