@@ -22,7 +22,8 @@ import java.util.List;
         @Query("SELECT se FROM ServicoExecutado se " +
                 "JOIN FETCH se.servico " +
                 "JOIN FETCH se.tecnico " +
-                "WHERE MONTH(se.data) = :mes AND YEAR(se.data) = :ano")
+                "WHERE MONTH(se.data) = :mes AND YEAR(se.data) = :ano " +
+                "ORDER BY se.id DESC")
         List<ServicoExecutado> encontrarPorMesEAno(@Param("mes") int mes,
                                                    @Param("ano") int ano);
 
