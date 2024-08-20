@@ -14,12 +14,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -123,6 +125,22 @@ public class ServicoExecutadoController {
                     .body("Ocorreu um erro ao processar a sua requisição: " + e.getMessage());
         }
     }
+
+    //Endpoint para buscar serviços executados dentro de um intervalo de datas (quinzenal).
+    @GetMapping("/listarPorPeriodo")
+    public ResponseEntity<?> listarServicosPorPeriodo(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim) {
+        try {
+            List<ServicoExecutadoListagemDTO> servicosDoPeriodo = servicoExecutadoService.listarServicosPorPeriodo(dataInicio, dataFim);
+            return ResponseEntity.ok(servicosDoPeriodo);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ocorreu um erro ao processar a sua requisição: " + e.getMessage());
+        }
+    }
+
 
     @GetMapping("/listarServicosAdmPorMesEAno")
     public ResponseEntity<?> listarServicosAdmPorMesEAno(

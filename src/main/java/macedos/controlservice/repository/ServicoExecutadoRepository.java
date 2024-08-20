@@ -27,6 +27,15 @@ import java.util.List;
         List<ServicoExecutado> encontrarPorMesEAno(@Param("mes") int mes,
                                                    @Param("ano") int ano);
 
+        //Consulta para buscar por serviços executados dentro de um intervalo de datas
+        @Query("SELECT se FROM ServicoExecutado se " +
+                "JOIN FETCH se.servico " +
+                "JOIN FETCH se.tecnico " +
+                "WHERE se.data BETWEEN :dataInicio AND :dataFim " +
+                "ORDER BY se.id DESC")
+        List<ServicoExecutado> encontrarPorPeriodo(@Param("dataInicio") LocalDate dataInicio,
+                                                   @Param("dataFim") LocalDate dataFim);
+
         @Query("SELECT COUNT(se) FROM ServicoExecutado se WHERE se.tecnico.idTecnico = :tecnicoId " +
                 "AND EXTRACT(MONTH FROM se.data) = :mes " +
                 "AND EXTRACT(YEAR FROM se.data) = :ano")

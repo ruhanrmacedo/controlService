@@ -181,6 +181,15 @@ public class ServicoExecutadoService {
                 .collect(Collectors.toList());
     }
 
+    //Método listar os serviços registrados dentro de um intervalo de datas (quinzenal)
+    public List<ServicoExecutadoListagemDTO> listarServicosPorPeriodo(LocalDate dataInicio, LocalDate dataFim) {
+        List<ServicoExecutado> servicosDoPeriodo = servicoExecutadoRepository.encontrarPorPeriodo(dataInicio, dataFim);
+        return servicosDoPeriodo.stream()
+                .map(this::converterParaListagemDTO)
+                .collect(Collectors.toList());
+    }
+
+
     public List<ServicoExecutado> calcularServicosDoAdmPorMesEAno(int mes, int ano) {
         // A implementação será similar ao método 'listarServicosPorMesEAno', mas retornando uma lista filtrada
         // adequada para usuários padrões, excluindo informações de valores.
