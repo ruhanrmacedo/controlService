@@ -156,7 +156,7 @@ public class ServicoExecutadoService {
         return servicoExecutado.getValorTotal();
     }
 
-    //Método responsável por calcular a quantidade de serviços, valor total 1 e valor total 2 dentro do mês/ano solicitado pelo usuário
+    //Método responsável por calcular a quantidade de serviços, valor total 1 e somar valor total dentro do mês/ano solicitado pelo usuário
     public ResumoMensalServicoDTO calcularResumoMensal(int mes, int ano) {
         List<ServicoExecutado> servicosDoMes = servicoExecutadoRepository.encontrarPorMesEAno(mes, ano);
 
@@ -171,6 +171,23 @@ public class ServicoExecutadoService {
         int quantidadeServicos = servicosDoMes.size();
 
         return new ResumoMensalServicoDTO(quantidadeServicos, valorTotal1, somaValorTotal);
+    }
+
+    // Método para calcular o resumo quinzenal usando o intervalo de datas
+    public ResumoMensalServicoDTO calcularResumoQuinzenal(LocalDate dataInicio, LocalDate dataFim) {
+        List<ServicoExecutado> servicosDoPeriodo = servicoExecutadoRepository.encontrarPorPeriodo(dataInicio, dataFim);
+
+        double valorTota1 = servicosDoPeriodo.stream()
+                .mapToDouble(this::calcularValor1Individual)
+                .sum();
+
+        double somaValorTotal = servicosDoPeriodo.stream()
+                .mapToDouble(this::calcularValorTotalIndividual)
+                .sum();
+
+        int quantidadeServicos = servicosDoPeriodo.size();
+
+        return new ResumoMensalServicoDTO(quantidadeServicos, valorTota1, somaValorTotal);
     }
 
     //Método listar os serviços registrados dentro do mês/ano solicitado

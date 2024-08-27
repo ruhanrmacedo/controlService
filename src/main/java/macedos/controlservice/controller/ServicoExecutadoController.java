@@ -9,6 +9,7 @@ import macedos.controlservice.entity.Servico;
 import macedos.controlservice.entity.ServicoExecutado;
 import macedos.controlservice.service.ServicoExecutadoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -85,6 +86,21 @@ public class ServicoExecutadoController {
             @RequestParam int ano) {
         try {
             ResumoMensalServicoDTO resumo = servicoExecutadoService.calcularResumoMensal(mes, ano);
+            return ResponseEntity.ok(resumo);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ocorreu um erro ao processar a sua requisição: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/resumoQuinzenal")
+    @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
+    public ResponseEntity<?> obterResumoQuinzenal(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim) {
+        try {
+            ResumoMensalServicoDTO resumo = servicoExecutadoService.calcularResumoQuinzenal(dataInicio, dataFim);
             return ResponseEntity.ok(resumo);
         } catch (Exception e) {
             e.printStackTrace();
