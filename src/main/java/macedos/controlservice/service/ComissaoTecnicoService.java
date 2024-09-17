@@ -37,15 +37,15 @@ public class ComissaoTecnicoService {
         BigDecimal percentual;
         // Lógica para determinar o percentual com base no número de contratos
         if (contratos >= 100) {
-            percentual = new BigDecimal("0.06"); // 6%
-        } else if (contratos >= 90) {
-            percentual = new BigDecimal("0.055"); // 5,5%
-        } else if (contratos >= 80) {
             percentual = new BigDecimal("0.05"); // 5%
-        } else if (contratos >= 70) {
+        } else if (contratos >= 90) {
             percentual = new BigDecimal("0.045"); // 4,5%
-        } else if (contratos >= 60) {
+        } else if (contratos >= 80) {
             percentual = new BigDecimal("0.04"); // 4%
+        } else if (contratos >= 70) {
+            percentual = new BigDecimal("0.035"); // 3,5%
+        } else if (contratos >= 60) {
+            percentual = new BigDecimal("0.03"); // 3%
         } else {
             percentual = BigDecimal.ZERO;
         }
