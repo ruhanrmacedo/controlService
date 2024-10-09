@@ -70,6 +70,15 @@ public class TecnicoController {
         return ResponseEntity.ok(detalhamentoTecnicoDTO);
     }
 
+    @PutMapping("/readmitirTecnico/{idTecnico}")
+    @Transactional
+    @Secured({"ROLE_GERENTE", "ROLE_ROOT"})
+    public ResponseEntity<DetalhamentoTecnicoDTO> readmitirTecnico(@PathVariable Long idTecnico) {
+        Tecnico tecnicoReadmitido = tecnicoService.readmitirTecnico(idTecnico);
+        DetalhamentoTecnicoDTO detalhamentoTecnicoDTO = new DetalhamentoTecnicoDTO(tecnicoReadmitido);
+        return ResponseEntity.ok(detalhamentoTecnicoDTO);
+    }
+
     @DeleteMapping("/excluirTecnico/{idTecnico}")
     @Secured({"ROLE_ROOT"})
     public ResponseEntity excluirTecnicoGerente(@PathVariable Long idTecnico) {

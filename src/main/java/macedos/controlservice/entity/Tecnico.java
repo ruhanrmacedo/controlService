@@ -62,4 +62,9 @@ public class Tecnico {
         }
     }
 
+    public void readmitirTecnico() {
+        this.dataAdmissao = LocalDate.now();
+        this.dataDesligamento = null;
+    }
+
 }

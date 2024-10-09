@@ -42,6 +42,13 @@ public class TecnicoService {
         return tecnicoDesligado;
     }
 
+    public Tecnico readmitirTecnico(Long idTecnico) {
+        var tecnico = tecnicoRepository.getReferenceById(idTecnico);
+        tecnico.readmitirTecnico();
+        tecnicoRepository.save(tecnico);
+        return tecnico;
+    }
+
     public void excluirTecnicoGerente(Long idTecnico){
         tecnicoRepository.deleteById(idTecnico);
     }
