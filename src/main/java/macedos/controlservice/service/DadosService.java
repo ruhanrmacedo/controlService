@@ -50,7 +50,9 @@ public class DadosService {
                         servicoExecutado.getServico().getDescricao(),
                         servicoExecutado.getServicosAdicionais().stream().map(servico -> servico.getDescricao()).collect(Collectors.toList()),
                         servicoExecutado.getServico().getValor1(),
-                        servicoExecutado.getValorTotal()
+                        servicoExecutado.getValorTotal(),
+                        servicoExecutado.getNomeCliente(),
+                        servicoExecutado.getMetragemCaboDrop()
                 ))
                 .collect(Collectors.toList());
     }

@@ -14,5 +14,7 @@ public record ServicoExecutadoListagemDTO(
         String descricaoServico,
         List<String> descricaoServicosAdicionais,
         Double valor1,
-        Double valorTotal) {
+        Double valorTotal,
+        String nomeCliente,
+        Double metragemCaboDrop) {
 }

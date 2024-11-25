@@ -62,7 +62,9 @@ public class ServicoExecutadoService {
                 tecnico,
                 servico,
                 servicosAdicionais,
-                valorTotal
+                valorTotal,
+                dados.nomeCliente(),
+                dados.metragemCaboDrop()
         );
         return servicoExecutadoRepository.save(servicoExecutado);
     }
@@ -90,6 +92,8 @@ public class ServicoExecutadoService {
                 .collect(Collectors.toList());
         Double valor1 = servicoExecutado.getServico().getValor1();
         Double valorTotal = servicoExecutado.getValorTotal();
+        String nomeCliente = servicoExecutado.getNomeCliente();
+        Double metragemCaboDrop = servicoExecutado.getMetragemCaboDrop();
 
         return new ServicoExecutadoListagemDTO(
                 servicoExecutado.getId(),
@@ -100,7 +104,9 @@ public class ServicoExecutadoService {
                 descricaoServico,
                 descricaoServicosAdicionais,
                 valor1,
-                valorTotal
+                valorTotal,
+                nomeCliente,
+                metragemCaboDrop
         );
     }
 

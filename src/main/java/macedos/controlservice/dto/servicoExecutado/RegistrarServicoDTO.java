@@ -18,7 +18,9 @@ public record RegistrarServicoDTO(
         Long idTecnico,
         @NotNull
         Long idServico,
-        List<Long> servicosAdicionais
+        List<Long> servicosAdicionais,
+        String nomeCliente,
+        Double metragemCaboDrop
 ) {
         public RegistrarServicoDTO {
                 if (servicosAdicionais == null) {

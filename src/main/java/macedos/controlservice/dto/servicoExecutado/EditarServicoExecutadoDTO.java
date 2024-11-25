@@ -13,7 +13,9 @@ public record EditarServicoExecutadoDTO(
         LocalDate data,
         Long idTecnico,
         Long idServico,
-        List<Long> servicosAdicionais
+        List<Long> servicosAdicionais,
+        String nomeCliente,
+        Double metragemCaboDrop
 ) {
 
 }

@@ -49,6 +49,11 @@ public class ServicoExecutado {
     private List<Servico> servicosAdicionais;
     @Column(name = "valor_total")
     private Double valorTotal;
+    @Column(name = "nome_cliente")
+    private String nomeCliente;
+
+    @Column(name = "metragem_cabo_drop")
+    private Double metragemCaboDrop;
 
     public void atualizarInformacoes(EditarServicoExecutadoDTO dados, TecnicoRepository tecnicoRepository, ServicoRepository servicoRepository) {
         if (dados.contrato() != null) {
@@ -74,6 +79,12 @@ public class ServicoExecutado {
                     this.servicosAdicionais.add(servicoAdicional);
                 }
             });
+        }
+        if (dados.nomeCliente() != null) {
+            this.nomeCliente = dados.nomeCliente();
+        }
+        if (dados.metragemCaboDrop() != null) {
+            this.metragemCaboDrop = dados.metragemCaboDrop();
         }
         this.valorTotal = calcularValorTotal(
                 this.servico.getValor1(),
