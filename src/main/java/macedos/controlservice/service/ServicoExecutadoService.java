@@ -27,12 +27,21 @@ public class ServicoExecutadoService {
     @Autowired
     private ServicoRepository servicoRepository;
 
+    private static final double LIMITE_METROS_CABO = 250.0;
+    private static final double VALOR_POR_METRO_EXCEDENTE = 2.0;
+
+    private double calcularExcedente(Double metragemCaboDrop) {
+        if (metragemCaboDrop == null) return 0d;
+        double excedente = metragemCaboDrop - LIMITE_METROS_CABO;
+        return excedente > 0 ? excedente * VALOR_POR_METRO_EXCEDENTE : 0d;
+    }
+
     public ServicoExecutado registrarServico(RegistrarServicoDTO dados) {
         if (!tecnicoRepository.existsById(dados.idTecnico())) {
             throw new ValidacaoException("Id do técnico informado não existe!");
         }
         if (!servicoRepository.existsById(dados.idServico())) {
-            throw new ValidacaoException("Id do técnico informado não existe!");
+            throw new ValidacaoException("Id do serviço informado não existe!");
         }
 
         var tecnico = tecnicoRepository.getReferenceById(dados.idTecnico());
@@ -49,10 +58,12 @@ public class ServicoExecutadoService {
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList()) : List.of();
 
-        Double valorTotal = calcularValorTotal(
+        Double valorBase = calcularValorTotal(
                 servico.getValor1(),
                 servicosAdicionais
         );
+        double excedente = calcularExcedente(dados.metragemCaboDrop());
+        Double valorTotal = valorBase + excedente;
 
         ServicoExecutado servicoExecutado = new ServicoExecutado(
                 null,
@@ -236,5 +247,19 @@ public class ServicoExecutadoService {
                 ))
                 .collect(Collectors.toList());
     }
+
+    public DetalheServicoExecutadoDTO detalhar(Long id) {
+        var se = servicoExecutadoRepository.findById(id).orElseThrow();
+        return new DetalheServicoExecutadoDTO(
+                se.getId(), se.getContrato(), se.getOs(), se.getData(),
+                se.getTecnico().getIdTecnico(), se.getTecnico().getNome(),
+                se.getServico().getIdServico(), se.getServico().getDescricao(),
+                se.getServicosAdicionais().stream()
+                        .map(s -> new ServicoAdicionalDTO(s.getIdServico(), s.getDescricao()))
+                        .toList(),
+                se.getNomeCliente(), se.getMetragemCaboDrop()
+        );
+    }
+
 
 }

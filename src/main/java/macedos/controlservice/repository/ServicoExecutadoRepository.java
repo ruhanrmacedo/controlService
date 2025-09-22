@@ -1,8 +1,6 @@
 package macedos.controlservice.repository;
 
-import macedos.controlservice.dto.comissaoTecnico.EvolucaoValorDTO;
 import macedos.controlservice.entity.ServicoExecutado;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;

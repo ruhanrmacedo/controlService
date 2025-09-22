@@ -72,7 +72,11 @@ public class ServicoExecutado {
             this.servico = servicoRepository.findById(dados.idServico()).orElse(null);
         }
         if (dados.servicosAdicionais() != null) {
-            this.servicosAdicionais.clear();
+            if (this.servicosAdicionais == null) {
+                this.servicosAdicionais = new java.util.ArrayList<>();
+            } else {
+                this.servicosAdicionais.clear();
+            }
             dados.servicosAdicionais().forEach(idServicoAdicional -> {
                 Servico servicoAdicional = servicoRepository.findById(idServicoAdicional).orElse(null);
                 if (servicoAdicional != null) {
@@ -86,16 +90,31 @@ public class ServicoExecutado {
         if (dados.metragemCaboDrop() != null) {
             this.metragemCaboDrop = dados.metragemCaboDrop();
         }
-        this.valorTotal = calcularValorTotal(
-                this.servico.getValor1(),
-                this.servicosAdicionais
-        );
+
+        Double valorPrincipal = (this.servico != null && this.servico.getValor1() != null) ? this.servico.getValor1() : 0d;
+        java.util.List<Servico> adicionais = (this.servicosAdicionais != null) ? this.servicosAdicionais : java.util.List.of();
+
+        double valorBase = calcularValorTotal(valorPrincipal, adicionais);
+        double excedente = calcularExcedenteCabo(this.metragemCaboDrop);
+        this.valorTotal = valorBase + excedente;
     }
 
     private Double calcularValorTotal(Double valorPrincipal, List<Servico> servicosAdicionais) {
-        Double valorTotalAdicionais = servicosAdicionais.stream().mapToDouble(Servico::getValor1).sum();
-        Double valorSubtotal = valorPrincipal + valorTotalAdicionais;
-        return valorSubtotal;
+        double base = (valorPrincipal != null) ? valorPrincipal : 0d;
+        double somaAdicionais = (servicosAdicionais != null ? servicosAdicionais : java.util.List.<Servico>of())
+                .stream()
+                .mapToDouble(s -> s.getValor1() != null ? s.getValor1() : 0d)
+                .sum();
+        return base + somaAdicionais;
+    }
+
+    private static final double LIMITE_METROS_CABO = 250.0;
+    private static final double VALOR_POR_METRO_EXCEDENTE = 2.0;
+
+    private double calcularExcedenteCabo(Double metragem) {
+        if (metragem == null) return 0d;
+        double excedente = metragem - LIMITE_METROS_CABO;
+        return excedente > 0 ? excedente * VALOR_POR_METRO_EXCEDENTE : 0d;
     }
 
 }

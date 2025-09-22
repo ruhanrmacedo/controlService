@@ -4,17 +4,14 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import macedos.controlservice.dto.ResumoMensalAdmDTO;
 import macedos.controlservice.dto.servicoExecutado.*;
-import macedos.controlservice.dto.tecnico.ListagemServicosDTO;
 import macedos.controlservice.entity.Servico;
 import macedos.controlservice.entity.ServicoExecutado;
 import macedos.controlservice.service.ServicoExecutadoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,11 +34,18 @@ public class ServicoExecutadoController {
     @PostMapping("/registrarServico")
     @Transactional
     public ResponseEntity resgistrarServico(@RequestBody @Valid RegistrarServicoDTO dados) {
-        ServicoExecutado servicoExecutado = new ServicoExecutado();
-        servicoExecutadoService.registrarServico(dados);
-        return ResponseEntity.ok(new DetalhamentoRegistrarServDTO(servicoExecutado.getId(), dados.contrato(), dados.os(), dados.data(), dados.idTecnico(), dados.idServico()));
+        ServicoExecutado salvo = servicoExecutadoService.registrarServico(dados);
+        return ResponseEntity.ok(
+                new DetalhamentoRegistrarServDTO(
+                        salvo.getId(),
+                        salvo.getContrato(),
+                        salvo.getOs(),
+                        salvo.getData(),
+                        salvo.getTecnico().getIdTecnico(),
+                        salvo.getServico().getIdServico()
+                )
+        );
     }
-
 
     @GetMapping("/listarServicosExecutadosAdm")
     // Todos os usuários tipo administrador tem acesso a esta lista.
@@ -188,4 +192,10 @@ public class ServicoExecutadoController {
         DetalhamentoRegistrarServDTO detalhamentoRegistrarServDTO = new DetalhamentoRegistrarServDTO(servicoEditado);
         return ResponseEntity.ok(detalhamentoRegistrarServDTO);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DetalheServicoExecutadoDTO> detalhar(@PathVariable Long id) {
+        return ResponseEntity.ok(servicoExecutadoService.detalhar(id));
+    }
+
 }
